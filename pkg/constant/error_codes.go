@@ -19,8 +19,9 @@ var ErrorMessageMap = map[int]string{
 }
 
 var InteralResponseCodeMap = map[int]int{
-	http.StatusInternalServerError: DefaultUnauthorizedError,
+	http.StatusInternalServerError: DefaultUnhandledError,
 	http.StatusNotFound:            DefaultNotFoundError,
 	http.StatusBadRequest:          DefaultBadRequestError,
 	http.StatusUnauthorized:        DefaultUnauthorizedError,
+	http.StatusUnprocessableEntity: DefaultDuplicateDataError,
 }

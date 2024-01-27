@@ -14,7 +14,7 @@ type User struct {
 	Name        string                `json:"name"`
 	Email       string                `json:"email"`
 	PhoneNumber types.PhoneNumber     `json:"phone_number"`
-	Password    string                `json:"-"`
+	Password    types.Password        `json:"-"`
 	Role        constant.UserRole     `json:"role"`
 	CreatedAt   int                   `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt   int                   `json:"updated_at" gorm:"autoUpdateTime"`
@@ -22,6 +22,10 @@ type User struct {
 
 	Outlet *Outlet `json:"outlet" gorm:"->"`
 	Avatar *Media  `json:"avatar" gorm:"foreignKey:AvatarID;references:MediaID"`
+
+	// json fields
+	AccessToken  string `json:"access_token,omitempty" gorm:"-"`
+	RefreshToken string `json:"refresh_token,omitempty" gorm:"-"`
 }
 
 func (User) TableName() string {

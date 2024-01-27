@@ -6,18 +6,29 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/ffajarpratama/pos-wash-api/pkg/hash"
 	"github.com/sirupsen/logrus"
 )
 
 type PhoneNumber string
+type Password string
 
-func (phone PhoneNumber) AddCode() PhoneNumber {
+func (phone PhoneNumber) Format() PhoneNumber {
 	phoneStr := string(phone)
 	if strings.HasPrefix(phoneStr, "0") {
 		return PhoneNumber("62" + phoneStr[1:])
 	}
 
 	return PhoneNumber(phoneStr)
+}
+
+func (pwd Password) Hash() Password {
+	pass, err := hash.HashAndSalt([]byte(pwd))
+	if err != nil {
+		panic(err)
+	}
+
+	return Password(pass)
 }
 
 // follows github.com/sirupsen/logrus@v1.9.3/json_formatter.go
