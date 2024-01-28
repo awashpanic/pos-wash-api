@@ -14,6 +14,7 @@ type IFaceUsecase interface {
 	Login(ctx context.Context, req *request.ReqLogin) (*model.User, error)
 
 	// user
+	CreateUser(ctx context.Context, req *request.ReqInsertUser) error
 	FindOneUser(ctx context.Context, userID uuid.UUID) (*model.User, error)
 
 	// outlet
