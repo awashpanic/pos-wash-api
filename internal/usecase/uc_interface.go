@@ -19,7 +19,6 @@ type IFaceUsecase interface {
 
 	// outlet
 	CreateOutlet(ctx context.Context, req *request.ReqInsertOutlet) error
-	FindAndCountOutlet(ctx context.Context, params *request.ListOutletQuery) ([]*model.Outlet, int64, error)
 	FindOneOutlet(ctx context.Context, outletID uuid.UUID) (*model.Outlet, error)
 
 	// user outlet
