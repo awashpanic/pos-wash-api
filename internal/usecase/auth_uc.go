@@ -20,7 +20,7 @@ func (u *Usecase) Register(ctx context.Context, req *request.ReqRegister) (*mode
 
 	user := &model.User{
 		Name:        req.Name,
-		Email:       req.Email,
+		Email:       &req.Email,
 		PhoneNumber: req.PhoneNumber.Format(),
 		Password:    req.Password.Hash(),
 	}
