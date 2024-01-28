@@ -8,8 +8,10 @@ import (
 	context "context"
 	reflect "reflect"
 
+	request "github.com/ffajarpratama/pos-wash-api/internal/http/request"
 	model "github.com/ffajarpratama/pos-wash-api/internal/model"
 	gomock "github.com/golang/mock/gomock"
+	uuid "github.com/google/uuid"
 	gorm "gorm.io/gorm"
 )
 
@@ -36,6 +38,34 @@ func (m *MockIFaceRepository) EXPECT() *MockIFaceRepositoryMockRecorder {
 	return m.recorder
 }
 
+// CreateOutlet mocks base method.
+func (m *MockIFaceRepository) CreateOutlet(ctx context.Context, data *model.Outlet, db *gorm.DB) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateOutlet", ctx, data, db)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateOutlet indicates an expected call of CreateOutlet.
+func (mr *MockIFaceRepositoryMockRecorder) CreateOutlet(ctx, data, db interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateOutlet", reflect.TypeOf((*MockIFaceRepository)(nil).CreateOutlet), ctx, data, db)
+}
+
+// CreateOutletOwner mocks base method.
+func (m *MockIFaceRepository) CreateOutletOwner(ctx context.Context, data *model.OutletOwner, db *gorm.DB) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateOutletOwner", ctx, data, db)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateOutletOwner indicates an expected call of CreateOutletOwner.
+func (mr *MockIFaceRepositoryMockRecorder) CreateOutletOwner(ctx, data, db interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateOutletOwner", reflect.TypeOf((*MockIFaceRepository)(nil).CreateOutletOwner), ctx, data, db)
+}
+
 // CreateUser mocks base method.
 func (m *MockIFaceRepository) CreateUser(ctx context.Context, data *model.User, db *gorm.DB) error {
 	m.ctrl.T.Helper()
@@ -48,6 +78,76 @@ func (m *MockIFaceRepository) CreateUser(ctx context.Context, data *model.User, 
 func (mr *MockIFaceRepositoryMockRecorder) CreateUser(ctx, data, db interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockIFaceRepository)(nil).CreateUser), ctx, data, db)
+}
+
+// DeleteOutlet mocks base method.
+func (m *MockIFaceRepository) DeleteOutlet(ctx context.Context, outletID uuid.UUID, db *gorm.DB) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteOutlet", ctx, outletID, db)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteOutlet indicates an expected call of DeleteOutlet.
+func (mr *MockIFaceRepositoryMockRecorder) DeleteOutlet(ctx, outletID, db interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteOutlet", reflect.TypeOf((*MockIFaceRepository)(nil).DeleteOutlet), ctx, outletID, db)
+}
+
+// FindAndCountOutlet mocks base method.
+func (m *MockIFaceRepository) FindAndCountOutlet(ctx context.Context, params *request.ListOutletQuery) ([]*model.Outlet, int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindAndCountOutlet", ctx, params)
+	ret0, _ := ret[0].([]*model.Outlet)
+	ret1, _ := ret[1].(int64)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// FindAndCountOutlet indicates an expected call of FindAndCountOutlet.
+func (mr *MockIFaceRepositoryMockRecorder) FindAndCountOutlet(ctx, params interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindAndCountOutlet", reflect.TypeOf((*MockIFaceRepository)(nil).FindAndCountOutlet), ctx, params)
+}
+
+// FindOneOutlet mocks base method.
+func (m *MockIFaceRepository) FindOneOutlet(ctx context.Context, query ...interface{}) (*model.Outlet, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx}
+	for _, a := range query {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "FindOneOutlet", varargs...)
+	ret0, _ := ret[0].(*model.Outlet)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindOneOutlet indicates an expected call of FindOneOutlet.
+func (mr *MockIFaceRepositoryMockRecorder) FindOneOutlet(ctx interface{}, query ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx}, query...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindOneOutlet", reflect.TypeOf((*MockIFaceRepository)(nil).FindOneOutlet), varargs...)
+}
+
+// FindOneOutletOwner mocks base method.
+func (m *MockIFaceRepository) FindOneOutletOwner(ctx context.Context, query ...interface{}) (*model.OutletOwner, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx}
+	for _, a := range query {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "FindOneOutletOwner", varargs...)
+	ret0, _ := ret[0].(*model.OutletOwner)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindOneOutletOwner indicates an expected call of FindOneOutletOwner.
+func (mr *MockIFaceRepositoryMockRecorder) FindOneOutletOwner(ctx interface{}, query ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx}, query...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindOneOutletOwner", reflect.TypeOf((*MockIFaceRepository)(nil).FindOneOutletOwner), varargs...)
 }
 
 // FindOneUser mocks base method.
@@ -68,4 +168,18 @@ func (mr *MockIFaceRepositoryMockRecorder) FindOneUser(ctx interface{}, query ..
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx}, query...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindOneUser", reflect.TypeOf((*MockIFaceRepository)(nil).FindOneUser), varargs...)
+}
+
+// UpdateOutlet mocks base method.
+func (m *MockIFaceRepository) UpdateOutlet(ctx context.Context, outletID uuid.UUID, data map[string]interface{}, db *gorm.DB) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateOutlet", ctx, outletID, data, db)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateOutlet indicates an expected call of UpdateOutlet.
+func (mr *MockIFaceRepositoryMockRecorder) UpdateOutlet(ctx, outletID, data, db interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateOutlet", reflect.TypeOf((*MockIFaceRepository)(nil).UpdateOutlet), ctx, outletID, data, db)
 }

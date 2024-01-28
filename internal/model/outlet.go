@@ -9,7 +9,7 @@ type Outlet struct {
 	OutletID  uuid.UUID             `json:"outlet_id" gorm:"primaryKey;default:gen_random_uuid()"`
 	Name      string                `json:"name"`
 	Address   string                `json:"address"`
-	LogoID    uuid.UUID             `json:"logo_id"`
+	LogoID    *uuid.UUID            `json:"logo_id"`
 	CreatedAt int                   `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt int                   `json:"updated_at" gorm:"autoUpdateTime"`
 	DeletedAt soft_delete.DeletedAt `json:"-" gorm:"column:deleted_at"`
