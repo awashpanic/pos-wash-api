@@ -73,13 +73,14 @@ func (u *Usecase) Login(ctx context.Context, req *request.ReqLogin) (*model.User
 		return nil, err
 	}
 
-	if outletOwner != nil {
-		res.Outlet = outletOwner.Outlet
-	}
-
 	claims := &jwt.CustomUserClaims{
 		ID:   res.UserID.String(),
 		Role: string(constant.Owner),
+	}
+
+	if outletOwner != nil {
+		res.Outlet = outletOwner.Outlet
+		claims.OutletID = outletOwner.OutletID.String()
 	}
 
 	tokens, err := jwt.GenerateToken(claims, u.Cnf)
