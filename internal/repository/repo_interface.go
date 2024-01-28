@@ -12,4 +12,8 @@ type IFaceRepository interface {
 	// user
 	CreateUser(ctx context.Context, data *model.User, db *gorm.DB) error
 	FindOneUser(ctx context.Context, query ...interface{}) (*model.User, error)
+
+	// [!temp] outlet-owner
+	CreateOutletOwner(ctx context.Context, data *model.OutletOwner, db *gorm.DB) error
+	FindOneOutletOwner(ctx context.Context, query ...interface{}) (*model.OutletOwner, error)
 }
