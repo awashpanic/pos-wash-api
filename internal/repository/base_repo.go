@@ -27,7 +27,8 @@ func (r *BaseRepository) Create(db *gorm.DB, params interface{}) (err error) {
 			return err
 		}
 
-		fmt.Printf("error-query-insert from caller : %s", getCallerFunctionName())
+		fmt.Printf("[error-query-insert], caller : %s\n", getCallerFunctionName())
+		fmt.Printf("[error] %v\n", err.Error())
 		err = custom_error.SetCustomError(&custom_error.ErrorContext{
 			HTTPCode: http.StatusInternalServerError,
 		})
@@ -51,7 +52,8 @@ func (r *BaseRepository) Update(db *gorm.DB, params interface{}) (err error) {
 			return err
 		}
 
-		fmt.Printf("error-query-update from caller : %s ", getCallerFunctionName())
+		fmt.Printf("[error-query-update], caller : %s\n", getCallerFunctionName())
+		fmt.Printf("[error] %v\n", err.Error())
 		err = custom_error.SetCustomError(&custom_error.ErrorContext{
 			HTTPCode: http.StatusInternalServerError,
 		})
@@ -97,7 +99,8 @@ func (r *BaseRepository) FindOne(db *gorm.DB, result interface{}) (err error) {
 			return err
 		}
 
-		fmt.Printf("error-query from caller : %s", getCallerFunctionName())
+		fmt.Printf("[error-query-find], caller : %s\n", getCallerFunctionName())
+		fmt.Printf("[error] %v\n", err.Error())
 		err = custom_error.SetCustomError(&custom_error.ErrorContext{
 			HTTPCode: http.StatusInternalServerError,
 		})
@@ -127,7 +130,8 @@ func (r *BaseRepository) Delete(db *gorm.DB, params interface{}) (err error) {
 			return err
 		}
 
-		fmt.Printf("error-query from caller : %s", getCallerFunctionName())
+		fmt.Printf("error-query-delete, caller : %s\n", getCallerFunctionName())
+		fmt.Printf("[error] %v\n", err.Error())
 		err = custom_error.SetCustomError(&custom_error.ErrorContext{
 			HTTPCode: http.StatusInternalServerError,
 		})

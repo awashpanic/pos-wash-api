@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/ffajarpratama/pos-wash-api/config"
-	"github.com/ffajarpratama/pos-wash-api/pkg/constant"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -31,7 +30,6 @@ const (
 )
 
 func GenerateToken(claims *CustomUserClaims, cnf *config.Config) (*JWTRes, error) {
-	claims.Role = string(constant.Customer)
 	claims.RegisteredClaims = jwt.RegisteredClaims{
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(ACCESS_TTL)),
 		Issuer:    "awash-panic.com",

@@ -19,7 +19,6 @@ func (r *Repository) FindOneUser(ctx context.Context, query ...interface{}) (*mo
 	if err := r.BaseRepository.FindOne(
 		r.db.
 			WithContext(ctx).
-			Preload("Outlet").
 			Preload("Avatar").
 			Where(query[0], query[1:]...),
 		&res,

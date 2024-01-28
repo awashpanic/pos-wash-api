@@ -17,8 +17,8 @@ Please delete options that are not relevant.
 
 ## Checklist
 
-- [ ] My code follows the style guidelines of this project
-- [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] My changes generate no new warnings
-- [ ] Any dependent changes have been merged and published in downstream modules
-- [ ] I have checked my code and corrected any misspellings
+- [x] My code follows the style guidelines of this project
+- [x] I have commented my code, particularly in hard-to-understand areas
+- [x] My changes generate no new warnings
+- [x] Any dependent changes have been merged and published in downstream modules
+- [x] I have checked my code and corrected any misspellings
