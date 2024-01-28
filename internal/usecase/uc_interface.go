@@ -15,4 +15,11 @@ type IFaceUsecase interface {
 
 	// user
 	FindOneUser(ctx context.Context, userID uuid.UUID) (*model.User, error)
+
+	// outlet
+	CreateOutlet(ctx context.Context, req *request.ReqInsertOutlet) error
+	FindAndCountOutlet(ctx context.Context, params *request.ListOutletQuery) ([]*model.Outlet, int64, error)
+	FindOneOutlet(ctx context.Context, outletID uuid.UUID) (*model.Outlet, error)
+	UpdateOutlet(ctx context.Context, req *request.ReqInsertOutlet) error
+	DeleteOutlet(ctx context.Context, outletID uuid.UUID) error
 }

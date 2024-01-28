@@ -21,12 +21,24 @@ func NewRouter(uc usecase.IFaceUsecase, v custom_validator.Validator, mw middlew
 		v:  v,
 	}
 
-	r.Route("/auth", func(r chi.Router) {
-		r.Post("/register", h.Register)
-		r.Post("/login", h.Login)
-		r.Route("/profile", func(r chi.Router) {
-			r.Use(mw.AuthenticateUser())
-			r.Get("/", h.GetProfile)
+	r.Route("/auth", func(auth chi.Router) {
+		auth.Post("/register", h.Register)
+		auth.Post("/login", h.Login)
+		auth.Route("/profile", func(profile chi.Router) {
+			profile.Use(mw.AuthenticateUser())
+			profile.Get("/", h.GetProfile)
+		})
+	})
+
+	r.Group(func(pvt chi.Router) {
+		pvt.Use(mw.AuthenticateUser())
+
+		pvt.Route("/outlet", func(outlet chi.Router) {
+			outlet.Post("/", h.CreateOutlet)
+			outlet.Get("/", h.FindAndCountOutlet)
+			outlet.Get("/{outletID}", h.FindOneOutlet)
+			outlet.Put("/{outletID}", h.UpdateOutlet)
+			outlet.Delete("/{outletID}", h.DeleteOutlet)
 		})
 	})
 
