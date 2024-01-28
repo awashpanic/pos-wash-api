@@ -35,10 +35,12 @@ func NewRouter(uc usecase.IFaceUsecase, v custom_validator.Validator, mw middlew
 
 		pvt.Route("/outlet", func(outlet chi.Router) {
 			outlet.Post("/", h.CreateOutlet)
-			outlet.Get("/", h.FindAndCountOutlet)
 			outlet.Get("/{outletID}", h.FindOneOutlet)
-			outlet.Put("/{outletID}", h.UpdateOutlet)
-			outlet.Delete("/{outletID}", h.DeleteOutlet)
+		})
+
+		pvt.Route("/customer", func(customer chi.Router) {
+			customer.Post("/", h.CreateCustomer)
+			customer.Get("/", h.FindAndCounCustomer)
 		})
 	})
 

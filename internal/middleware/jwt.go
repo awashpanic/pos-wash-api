@@ -51,6 +51,7 @@ func (m Middleware) AuthenticateUser() func(h http.Handler) http.Handler {
 			ctx := r.Context()
 			ctx = context.WithValue(ctx, constant.UserIDKey, customClaims.ID)
 			ctx = context.WithValue(ctx, constant.RoleKey, customClaims.Role)
+			ctx = context.WithValue(ctx, constant.OutletIDKey, customClaims.OutletID)
 			h.ServeHTTP(w, r.WithContext(ctx))
 		}
 

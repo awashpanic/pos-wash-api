@@ -31,19 +31,6 @@ func (h *handler) CreateOutlet(w http.ResponseWriter, r *http.Request) {
 	response.OK(w, nil)
 }
 
-func (h *handler) FindAndCountOutlet(w http.ResponseWriter, r *http.Request) {
-	params := new(request.ListOutletQuery)
-	params.BaseQuery = request.NewBaseQuery(r)
-
-	res, cnt, err := h.uc.FindAndCountOutlet(r.Context(), params)
-	if err != nil {
-		response.Error(w, err)
-		return
-	}
-
-	response.Paging(w, res, params.Page, params.Limit, cnt)
-}
-
 func (h *handler) FindOneOutlet(w http.ResponseWriter, r *http.Request) {
 	outletID, _ := uuid.Parse(chi.URLParam(r, "outletID"))
 	res, err := h.uc.FindOneOutlet(r.Context(), outletID)
@@ -53,19 +40,4 @@ func (h *handler) FindOneOutlet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.OK(w, res)
-}
-
-func (h *handler) UpdateOutlet(w http.ResponseWriter, r *http.Request) {
-	response.OK(w, nil)
-}
-
-func (h *handler) DeleteOutlet(w http.ResponseWriter, r *http.Request) {
-	outletID, _ := uuid.Parse(chi.URLParam(r, "outletID"))
-	err := h.uc.DeleteOutlet(r.Context(), outletID)
-	if err != nil {
-		response.Error(w, err)
-		return
-	}
-
-	response.OK(w, nil)
 }

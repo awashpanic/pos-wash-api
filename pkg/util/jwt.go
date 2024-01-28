@@ -51,3 +51,15 @@ func GetRoleFromCtx(ctx context.Context) string {
 
 	return ""
 }
+
+func GetOutletIDFromCtx(ctx context.Context) string {
+	if ctx == nil {
+		return ""
+	}
+
+	if userID, ok := ctx.Value(constant.OutletIDKey).(string); ok {
+		return userID
+	}
+
+	return ""
+}
