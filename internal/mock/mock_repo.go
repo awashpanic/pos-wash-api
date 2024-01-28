@@ -80,6 +80,20 @@ func (mr *MockIFaceRepositoryMockRecorder) CreateUser(ctx, data, db interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockIFaceRepository)(nil).CreateUser), ctx, data, db)
 }
 
+// CreateUserOutlet mocks base method.
+func (m *MockIFaceRepository) CreateUserOutlet(ctx context.Context, data *model.UserOutlet, db *gorm.DB) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateUserOutlet", ctx, data, db)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateUserOutlet indicates an expected call of CreateUserOutlet.
+func (mr *MockIFaceRepositoryMockRecorder) CreateUserOutlet(ctx, data, db interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUserOutlet", reflect.TypeOf((*MockIFaceRepository)(nil).CreateUserOutlet), ctx, data, db)
+}
+
 // DeleteOutlet mocks base method.
 func (m *MockIFaceRepository) DeleteOutlet(ctx context.Context, outletID uuid.UUID, db *gorm.DB) error {
 	m.ctrl.T.Helper()
@@ -108,6 +122,22 @@ func (m *MockIFaceRepository) FindAndCountOutlet(ctx context.Context, params *re
 func (mr *MockIFaceRepositoryMockRecorder) FindAndCountOutlet(ctx, params interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindAndCountOutlet", reflect.TypeOf((*MockIFaceRepository)(nil).FindAndCountOutlet), ctx, params)
+}
+
+// FindAndCountUserOutlet mocks base method.
+func (m *MockIFaceRepository) FindAndCountUserOutlet(ctx context.Context, params *request.ListUserOutletQuery) ([]*model.UserOutlet, int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindAndCountUserOutlet", ctx, params)
+	ret0, _ := ret[0].([]*model.UserOutlet)
+	ret1, _ := ret[1].(int64)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// FindAndCountUserOutlet indicates an expected call of FindAndCountUserOutlet.
+func (mr *MockIFaceRepositoryMockRecorder) FindAndCountUserOutlet(ctx, params interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindAndCountUserOutlet", reflect.TypeOf((*MockIFaceRepository)(nil).FindAndCountUserOutlet), ctx, params)
 }
 
 // FindOneOutlet mocks base method.

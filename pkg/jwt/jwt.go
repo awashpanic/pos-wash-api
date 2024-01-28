@@ -8,14 +8,15 @@ import (
 )
 
 type CustomUserClaims struct {
-	ID   string `json:"id"`
-	Role string `json:"role"`
+	ID       string `json:"id"`
+	OutletID string `json:"outlet_id"`
+	Role     string `json:"role"`
 	jwt.RegisteredClaims
 }
 
 type RefreshTokenClaims struct {
-	UserSub  string `json:"user_sub"`
-	AdminSub string `json:"admin_sub"`
+	UserSub   string `json:"user_sub"`
+	OutletSub string `json:"outlet_sub"`
 	jwt.RegisteredClaims
 }
 
@@ -42,7 +43,8 @@ func GenerateToken(claims *CustomUserClaims, cnf *config.Config) (*JWTRes, error
 	}
 
 	refClaims := &RefreshTokenClaims{
-		UserSub: claims.ID,
+		UserSub:   claims.ID,
+		OutletSub: claims.OutletID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(REFRESH_TTL)),
 			Issuer:    "awash-panic.com",
