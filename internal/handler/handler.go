@@ -50,6 +50,14 @@ func NewV1Handler(cnf *config.Config, uc usecase.IFaceUsecase, v custom_validato
 			service.Put("/{serviceID}", h.UpdateService)
 			service.Delete("/{serviceID}", h.DeleteService)
 		})
+
+		private.Route("/customer", func(customer chi.Router) {
+			customer.Post("/", h.CreateCustomer)
+			customer.Get("/", h.FindAndCountCustomer)
+			customer.Get("/{customerID}", h.FindOneCustomer)
+			customer.Put("/{customerID}", h.UpdateCustomer)
+			customer.Delete("/{customerID}", h.DeleteCustomer)
+		})
 	})
 
 	return r

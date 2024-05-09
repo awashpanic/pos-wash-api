@@ -27,4 +27,11 @@ type IFaceUsecase interface {
 	FindOneService(ctx context.Context, serviceID uuid.UUID) (*model.Service, error)
 	UpdateService(ctx context.Context, req *request.UpdateService) error
 	DeleteService(ctx context.Context, serviceID uuid.UUID) error
+
+	// customer
+	CreateCustomer(ctx context.Context, req *request.CreateCustomer) error
+	FindAndCountCustomer(ctx context.Context, params *request.ListCustomerQuery) ([]*model.Customer, int64, error)
+	FindOneCustomer(ctx context.Context, customerID uuid.UUID) (*model.Customer, error)
+	UpdateCustomer(ctx context.Context, req *request.UpdateCustomer) error
+	DeleteCustomer(ctx context.Context, customerID uuid.UUID) error
 }

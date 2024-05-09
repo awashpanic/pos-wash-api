@@ -30,4 +30,11 @@ type IFaceRepository interface {
 	FindOneService(ctx context.Context, query ...interface{}) (*model.Service, error)
 	UpdateService(ctx context.Context, db *gorm.DB, data map[string]interface{}, query ...interface{}) error
 	DeleteService(ctx context.Context, db *gorm.DB, query ...interface{}) error
+
+	// customer
+	CreateCustomer(ctx context.Context, data *model.Customer, db *gorm.DB) error
+	FindAndCountCustomer(ctx context.Context, params *request.ListCustomerQuery) ([]*model.Customer, int64, error)
+	FindOneCustomer(ctx context.Context, query ...interface{}) (*model.Customer, error)
+	UpdateCustomer(ctx context.Context, db *gorm.DB, data map[string]interface{}, query ...interface{}) error
+	DeleteCustomer(ctx context.Context, db *gorm.DB, query ...interface{}) error
 }
