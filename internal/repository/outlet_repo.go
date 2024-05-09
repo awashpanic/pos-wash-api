@@ -33,8 +33,8 @@ func (r *Repository) FindAndCountOutlet(ctx context.Context, params *request.Lis
 	}
 
 	if err := query.
-		Limit(params.Limit).
-		Offset(util.CalculateOffset(params.Page, params.Limit)).
+		Limit(params.PerPage).
+		Offset(util.CalculateOffset(params.Page, params.PerPage)).
 		Find(&res).
 		Error; err != nil {
 		return nil, 0, err

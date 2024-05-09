@@ -10,7 +10,7 @@ import (
 )
 
 func (h *handler) Register(w http.ResponseWriter, r *http.Request) {
-	var req request.ReqRegister
+	var req request.Register
 	err := h.v.ValidateStruct(r, &req)
 	if err != nil {
 		response.Error(w, err)
@@ -27,7 +27,7 @@ func (h *handler) Register(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) Login(w http.ResponseWriter, r *http.Request) {
-	var req request.ReqLogin
+	var req request.Login
 	err := h.v.ValidateStruct(r, &req)
 	if err != nil {
 		response.Error(w, err)
