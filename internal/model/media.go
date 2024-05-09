@@ -1,19 +1,24 @@
 package model
 
 import (
+	"time"
+
 	"github.com/google/uuid"
-	"gorm.io/plugin/soft_delete"
+	"gorm.io/gorm"
 )
 
 type Media struct {
-	MediaID   uuid.UUID             `json:"media_id" gorm:"primaryKey; default:gen_random_uuid()"`
-	Name      string                `json:"name"`
-	Size      int                   `json:"size"`
-	Mimetype  string                `json:"mimetype"`
-	MediaURL  string                `json:"media_url"`
-	CreatedAt int                   `json:"created_at" gorm:"autoCreateTime"`
-	UpdatedAt int                   `json:"updated_at" gorm:"autoUpdateTime"`
-	DeletedAt soft_delete.DeletedAt `json:"-" gorm:"column:deleted_at"`
+	MediaID   uuid.UUID      `json:"media_id" gorm:"primaryKey; default:gen_random_uuid()"`
+	Name      string         `json:"name"`
+	Path      string         `json:"path"`
+	Size      int            `json:"size"`
+	Mimetype  string         `json:"mimetype"`
+	CreatedAt time.Time      `json:"created_at" gorm:"autoCreateTime"`
+	UpdatedAt time.Time      `json:"updated_at" gorm:"autoUpdateTime"`
+	DeletedAt gorm.DeletedAt `json:"-" gorm:"column:deleted_at"`
+
+	// json field
+	MediaURL string `json:"media_url" gorm:"-"`
 }
 
 func (Media) TableName() string {
