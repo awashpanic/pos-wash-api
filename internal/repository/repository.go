@@ -1,19 +1,16 @@
 package repository
 
 import (
-	"go.mongodb.org/mongo-driver/mongo"
 	"gorm.io/gorm"
 )
 
 type Repository struct {
 	BaseRepository
-	db    *gorm.DB
-	mongo *mongo.Database
+	db *gorm.DB
 }
 
-func New(db *gorm.DB, mongoDb *mongo.Database) IFaceRepository {
+func New(db *gorm.DB) IFaceRepository {
 	return &Repository{
-		db:    db,
-		mongo: mongoDb,
+		db: db,
 	}
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/ffajarpratama/pos-wash-api/pkg/constant"
 )
 
-type CustomErrors struct {
+type CustomError struct {
 	ErrorContext *ErrorContext
 }
 
@@ -19,21 +19,21 @@ type ErrorContext struct {
 	Func     string
 }
 
-func (c *CustomErrors) Error() string {
+func (c *CustomError) Error() string {
 	if c.ErrorContext.HTTPCode == 0 {
 		c.ErrorContext.HTTPCode = http.StatusInternalServerError
 	}
 
-	return constant.ErrorMessageMap[constant.DefaultUnhandledError]
+	return constant.HTTPStatusText(http.StatusInternalServerError)
 }
 
-func (c *CustomErrors) IsIgnore() bool {
+func (c *CustomError) IsIgnore() bool {
 	return c.ErrorContext.IsIgnore
 }
 
-func SetCustomError(contextError *ErrorContext) *CustomErrors {
+func SetCustomError(contextError *ErrorContext) *CustomError {
 	contextError.Func = getCallerFunctionName()
-	return &CustomErrors{
+	return &CustomError{
 		ErrorContext: contextError,
 	}
 }

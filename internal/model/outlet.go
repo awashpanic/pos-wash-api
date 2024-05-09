@@ -1,20 +1,24 @@
 package model
 
 import (
+	"time"
+
 	"github.com/google/uuid"
-	"gorm.io/plugin/soft_delete"
+	"gorm.io/gorm"
 )
 
 type Outlet struct {
-	OutletID  uuid.UUID             `json:"outlet_id" gorm:"primaryKey;default:gen_random_uuid()"`
-	Name      string                `json:"name"`
-	Address   string                `json:"address"`
-	LogoID    *uuid.UUID            `json:"logo_id"`
-	CreatedAt int                   `json:"created_at" gorm:"autoCreateTime"`
-	UpdatedAt int                   `json:"updated_at" gorm:"autoUpdateTime"`
-	DeletedAt soft_delete.DeletedAt `json:"-" gorm:"column:deleted_at"`
+	OutletID  uuid.UUID      `json:"outlet_id" gorm:"primaryKey; default:gen_random_uuid()"`
+	UserID    uuid.UUID      `json:"user_id"`
+	Name      string         `json:"name"`
+	Address   string         `json:"address"`
+	LogoID    *uuid.UUID     `json:"logo_id"`
+	CreatedAt time.Time      `json:"created_at" gorm:"autoCreateTime"`
+	UpdatedAt time.Time      `json:"updated_at" gorm:"autoUpdateTime"`
+	DeletedAt gorm.DeletedAt `json:"-" gorm:"column:deleted_at"`
 
-	Logo *Media `json:"logo" gorm:"foreignKey:LogoID;references:MediaID"`
+	User *User  `json:"user" gorm:"foreignKey:UserID; references:UserID"`
+	Logo *Media `json:"logo" gorm:"foreignKey:LogoID; references:MediaID"`
 }
 
 func (Outlet) TableName() string {

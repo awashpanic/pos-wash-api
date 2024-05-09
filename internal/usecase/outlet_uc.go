@@ -9,7 +9,7 @@ import (
 )
 
 // CreateOutlet implements IFaceUsecase.
-func (u *Usecase) CreateOutlet(ctx context.Context, req *request.ReqInsertOutlet) error {
+func (u *Usecase) CreateOutlet(ctx context.Context, req *request.CreateOutlet) error {
 	tx := u.DB.Begin()
 	defer tx.Rollback()
 
@@ -20,16 +20,6 @@ func (u *Usecase) CreateOutlet(ctx context.Context, req *request.ReqInsertOutlet
 	}
 
 	err := u.Repo.CreateOutlet(ctx, outlet, tx)
-	if err != nil {
-		return err
-	}
-
-	outletOwner := &model.OutletOwner{
-		OutletID: outlet.OutletID,
-		UserID:   req.UserID,
-	}
-
-	err = u.Repo.CreateOutletOwner(ctx, outletOwner, tx)
 	if err != nil {
 		return err
 	}

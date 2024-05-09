@@ -6,7 +6,7 @@ type ListOutletQuery struct {
 	BaseQuery
 }
 
-type ReqInsertOutlet struct {
+type CreateOutlet struct {
 	Name     string     `json:"name" validate:"required"`
 	Address  string     `json:"address" validate:"required"`
 	LogoID   *uuid.UUID `json:"logo_id"`

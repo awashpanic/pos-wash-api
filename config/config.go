@@ -28,10 +28,7 @@ type App struct {
 }
 
 type JWTConfig struct {
-	Admin   string
-	User    string
-	Club    string
-	Refresh string
+	Secret string
 }
 
 type Postgres struct {
@@ -105,10 +102,7 @@ func New() *Config {
 			URL:         v.GetString("APP_URL"),
 		},
 		JWTConfig: JWTConfig{
-			Admin:   v.GetString("JWT_ADMIN"),
-			User:    v.GetString("JWT_USER"),
-			Club:    v.GetString("JWT_CLUB"),
-			Refresh: v.GetString("JWT_REFRESH"),
+			Secret: v.GetString("JWT_SECRET"),
 		},
 		Postgres: Postgres{
 			Host:     v.GetString("POSTGRES_HOST"),

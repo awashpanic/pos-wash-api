@@ -5,30 +5,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
-	"strings"
 	"time"
 
-	custom_jwt "github.com/ffajarpratama/pos-wash-api/pkg/jwt"
 	"github.com/ffajarpratama/pos-wash-api/pkg/util"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/sirupsen/logrus"
 )
-
-type userLog struct {
-	ID   string
-	Role string
-}
 
 type customResponseWriter struct {
 	http.ResponseWriter
 	statusCode int
-	body       *bytes.Buffer
-}
-
-func (r customResponseWriter) Write(b []byte) (int, error) {
-	r.body.Write(b)
-	return r.ResponseWriter.Write(b)
 }
 
 func (r *customResponseWriter) WriteHeader(code int) {
@@ -36,103 +22,59 @@ func (r *customResponseWriter) WriteHeader(code int) {
 	r.ResponseWriter.WriteHeader(code)
 }
 
-func Logger(log *logrus.Logger) func(h http.Handler) http.Handler {
-	return func(h http.Handler) http.Handler {
-		fn := func(w http.ResponseWriter, r *http.Request) {
-			ww := &customResponseWriter{body: &bytes.Buffer{}, ResponseWriter: w}
+func Logger(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ww := &customResponseWriter{ResponseWriter: w}
+		t1 := time.Now()
 
-			bodyJSON, err := io.ReadAll(r.Body)
+		b, err := io.ReadAll(r.Body)
+		if err != nil {
+			log.Printf("[error:io.ReadAll()] \n%v\n", err)
+		}
+
+		defer func() {
+			log.Printf("%s from %s - %d in %s \n", fmt.Sprintf("%s %s %s", r.Method, r.RequestURI, r.Proto), r.RemoteAddr, ww.statusCode, time.Since(t1).Abs().String())
+
+			err = r.Body.Close()
 			if err != nil {
-				log.Printf("[error-io-reader] \n%v\n", err)
+				log.Printf("[error:body.Close()] \n%v\n", err)
 			}
 
-			var payload map[string]interface{}
-			if len(bodyJSON) > 0 {
-				json.Unmarshal(bodyJSON, &payload)
-			}
-
+			fields := make(map[string]interface{})
 			token, _ := util.GetTokenFromHeader(r)
-			userClaims := parseWithoutVerified(token)
-			defer func() {
-				fields := map[string]interface{}{
-					"@path": fmt.Sprintf("[%d][%s] %s", ww.statusCode, r.Method, r.RequestURI),
-					"@time": util.TimeNow().Format(time.DateTime),
-					"body":  payload,
+			claims := ParseWithoutVerified(token)
+			if token != "" && claims != nil {
+				fields["@auth"] = map[string]interface{}{
+					"user": map[string]interface{}{
+						"id":        claims.ID,
+						"outlet_id": claims.OutletID,
+						"role":      claims.Role,
+					},
 				}
+			}
 
-				if token != "" && userClaims != nil {
-					fields["auth"] = map[string]interface{}{
-						"user": fmt.Sprintf("id: %s, role: %s", userClaims.ID, userClaims.Role),
-					}
-				}
-
-				err = r.Body.Close()
+			if len(b) > 0 {
+				body := make(map[string]interface{})
+				err = json.Unmarshal(b, &body)
 				if err != nil {
-					log.Printf("[error-body-close] \n%v\n", err)
+					log.Printf("[error:json.Unmarshal()] \n%v\n", err)
 				}
 
-				if !isExcludeRouter(r.RequestURI) {
-					log.WithFields(fields).Info()
+				fields["@request"] = body
+			}
+
+			if len(fields) > 0 {
+				logfield, err := json.Marshal(fields)
+				if err != nil {
+					log.Printf("[error:json.Marshal()] \n%v\n", err)
 				}
-			}()
 
-			// create new body for handlers
-			newBody := io.NopCloser(bytes.NewBuffer(bodyJSON))
-			r.Body = newBody
+				log.Println(string(logfield))
+			}
+		}()
 
-			h.ServeHTTP(ww, r)
-		}
+		r.Body = io.NopCloser(bytes.NewBuffer(b))
 
-		return http.HandlerFunc(fn)
-	}
+		h.ServeHTTP(ww, r)
+	})
 }
-
-func isExcludeRouter(path string) bool {
-	if strings.Contains(path, "media") {
-		return true
-	}
-
-	if strings.Contains(path, "import") {
-		return true
-	}
-
-	// list of excluded routes
-	excluded := make(map[string]bool)
-
-	if _, ok := excluded[path]; ok {
-		return true
-	}
-
-	return false
-}
-
-func parseWithoutVerified(tokenString string) *userLog {
-	resJwt, _, err := new(jwt.Parser).ParseUnverified(tokenString, &custom_jwt.CustomUserClaims{})
-	if err != nil {
-		return nil
-	}
-
-	userClaims, ok := resJwt.Claims.(*custom_jwt.CustomUserClaims)
-	if ok && userClaims.ID != "" {
-		return &userLog{
-			ID:   userClaims.ID,
-			Role: userClaims.Role,
-		}
-	}
-
-	return nil
-}
-
-// // getTraceID returns a request ID from the given context if one is present.
-// // Returns the empty string if a request ID cannot be found.
-// func getTraceID(ctx context.Context) string {
-// 	if ctx == nil {
-// 		return ""
-// 	}
-
-// 	if reqID, ok := ctx.Value(chi_middleware.RequestIDKey).(string); ok {
-// 		return reqID
-// 	}
-
-// 	return ""
-// }

@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"net/http"
 	"reflect"
-	"runtime"
 	"strings"
 
 	"github.com/ffajarpratama/pos-wash-api/pkg/constant"
-	custom_error "github.com/ffajarpratama/pos-wash-api/pkg/error"
+	"github.com/ffajarpratama/pos-wash-api/pkg/custom_error"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -18,21 +17,7 @@ type BaseRepository struct{}
 func (r *BaseRepository) Create(db *gorm.DB, params interface{}) (err error) {
 	err = db.Model(params).Create(params).Error
 	if err != nil {
-		if IsDuplicateErr(err) {
-			err = custom_error.SetCustomError(&custom_error.ErrorContext{
-				HTTPCode: http.StatusUnprocessableEntity,
-				Code:     constant.DefaultDuplicateDataError,
-			})
-
-			return err
-		}
-
-		fmt.Printf("[error-query-insert], caller : %s\n", getCallerFunctionName())
 		fmt.Printf("[error] %v\n", err.Error())
-		err = custom_error.SetCustomError(&custom_error.ErrorContext{
-			HTTPCode: http.StatusInternalServerError,
-		})
-
 		return err
 	}
 
@@ -43,21 +28,7 @@ func (r *BaseRepository) Update(db *gorm.DB, params interface{}) (err error) {
 	rows := db.Omit(clause.Associations).Model(params).Updates(params)
 	err = rows.Error
 	if err != nil {
-		if IsDuplicateErr(err) {
-			err = custom_error.SetCustomError(&custom_error.ErrorContext{
-				HTTPCode: http.StatusUnprocessableEntity,
-				Code:     constant.DefaultDuplicateDataError,
-			})
-
-			return err
-		}
-
-		fmt.Printf("[error-query-update], caller : %s\n", getCallerFunctionName())
 		fmt.Printf("[error] %v\n", err.Error())
-		err = custom_error.SetCustomError(&custom_error.ErrorContext{
-			HTTPCode: http.StatusInternalServerError,
-		})
-
 		return err
 	}
 
@@ -83,6 +54,8 @@ func (r *BaseRepository) Update(db *gorm.DB, params interface{}) (err error) {
 func (r *BaseRepository) FindOne(db *gorm.DB, result interface{}) (err error) {
 	err = db.First(result).Error
 	if err != nil {
+		fmt.Printf("[error] %v\n", err.Error())
+
 		if err == gorm.ErrRecordNotFound {
 			nameField := reflect.TypeOf(result).Elem().Name()
 			msg := ""
@@ -95,15 +68,7 @@ func (r *BaseRepository) FindOne(db *gorm.DB, result interface{}) (err error) {
 				Code:     constant.DefaultNotFoundError,
 				Message:  msg,
 			})
-
-			return err
 		}
-
-		fmt.Printf("[error-query-find], caller : %s\n", getCallerFunctionName())
-		fmt.Printf("[error] %v\n", err.Error())
-		err = custom_error.SetCustomError(&custom_error.ErrorContext{
-			HTTPCode: http.StatusInternalServerError,
-		})
 
 		return err
 	}
@@ -114,6 +79,8 @@ func (r *BaseRepository) FindOne(db *gorm.DB, result interface{}) (err error) {
 func (r *BaseRepository) Delete(db *gorm.DB, params interface{}) (err error) {
 	err = db.Model(params).Delete(params).Error
 	if err != nil {
+		fmt.Printf("[error] %v\n", err.Error())
+
 		if err == gorm.ErrRecordNotFound {
 			nameField := reflect.TypeOf(params).Elem().Name()
 			msg := ""
@@ -126,15 +93,7 @@ func (r *BaseRepository) Delete(db *gorm.DB, params interface{}) (err error) {
 				Code:     constant.DefaultNotFoundError,
 				Message:  msg,
 			})
-
-			return err
 		}
-
-		fmt.Printf("error-query-delete, caller : %s\n", getCallerFunctionName())
-		fmt.Printf("[error] %v\n", err.Error())
-		err = custom_error.SetCustomError(&custom_error.ErrorContext{
-			HTTPCode: http.StatusInternalServerError,
-		})
 
 		return err
 	}
@@ -143,72 +102,9 @@ func (r *BaseRepository) Delete(db *gorm.DB, params interface{}) (err error) {
 }
 
 func IsDuplicateErr(err error) bool {
-	containsDuplicate := strings.Contains(strings.ToLower(err.Error()), "duplicate")
-	constainsRowAffected := strings.Contains(err.Error(), "command cannot affect row a second time")
-
-	return constainsRowAffected || containsDuplicate
+	return strings.Contains(err.Error(), "duplicate")
 }
 
 func IsRecordNotfound(err error) bool {
-	if err == gorm.ErrRecordNotFound {
-		return true
-	}
-
-	value, ok := err.(*custom_error.CustomErrors)
-	if !ok {
-		return false
-	}
-
-	if value == nil {
-		return false
-	}
-
-	if value.ErrorContext == nil {
-		return false
-	}
-
-	if value.ErrorContext.HTTPCode == http.StatusNotFound {
-		return true
-	}
-
-	if value.ErrorContext.Code == constant.DefaultNotFoundError {
-		return true
-	}
-
-	return false
-}
-
-func IsDuplicateConstraintErr(err error) bool {
-	return strings.Contains(err.Error(), "command cannot affect row a second time")
-}
-
-//nolint:gomnd
-func getCallerFunctionName() string {
-	// Skip GetCallerFunctionName and the function to get the caller of
-	return getFrame(2).Function
-}
-
-//nolint:gomnd
-func getFrame(skipFrames int) runtime.Frame {
-	// We need the frame at index skipFrames+2, since we never want runtime.Callers and getFrame
-	targetFrameIndex := skipFrames + 2
-
-	// Set size to targetFrameIndex+2 to ensure we have room for one more caller than we need
-
-	programCounters := make([]uintptr, targetFrameIndex+2)
-	n := runtime.Callers(0, programCounters)
-
-	frame := runtime.Frame{Function: "unknown"}
-	if n > 0 {
-		frames := runtime.CallersFrames(programCounters[:n])
-		for more, frameIndex := true, 0; more && frameIndex <= targetFrameIndex; frameIndex++ {
-			var frameCandidate runtime.Frame
-			frameCandidate, more = frames.Next()
-			if frameIndex == targetFrameIndex {
-				frame = frameCandidate
-			}
-		}
-	}
-
-	return frame
+	return err == gorm.ErrRecordNotFound
 }
