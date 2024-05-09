@@ -13,7 +13,7 @@ import (
 func (h *handler) CreateOutlet(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	var req request.ReqInsertOutlet
+	var req request.CreateOutlet
 	err := h.v.ValidateStruct(r, &req)
 	if err != nil {
 		response.Error(w, err)
