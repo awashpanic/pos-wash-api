@@ -10,8 +10,8 @@ import (
 	"net/http"
 
 	"github.com/ffajarpratama/pos-wash-api/pkg/constant"
-	custom_error "github.com/ffajarpratama/pos-wash-api/pkg/error"
-	custom_validator "github.com/ffajarpratama/pos-wash-api/pkg/validator"
+	"github.com/ffajarpratama/pos-wash-api/pkg/custom_error"
+	"github.com/ffajarpratama/pos-wash-api/pkg/custom_validator"
 )
 
 const (
@@ -30,13 +30,14 @@ type JsonResponse struct {
 	Success bool           `json:"success"`
 	Paging  *PagingJSON    `json:"paging"`
 	Data    interface{}    `json:"data"`
-	Errors  *ErrorResponse `json:"errors"`
+	Error   *ErrorResponse `json:"error"`
 }
 
 type ErrorResponse struct {
-	Code    int    `json:"code"`
-	Status  int    `json:"status"`
-	Message string `json:"message"`
+	Code    int      `json:"code"`
+	Status  int      `json:"status"`
+	Message string   `json:"message"`
+	Details []string `json:"details,omitempty"`
 }
 
 type PagingJSON struct {
@@ -59,6 +60,7 @@ func OK(w http.ResponseWriter, data interface{}) {
 
 func Paging(w http.ResponseWriter, list interface{}, page, perPage int, cnt int64) {
 	var paging *PagingJSON
+
 	total := calculateTotalPage(cnt, perPage)
 	if page > 0 {
 		paging = &PagingJSON{
@@ -77,7 +79,7 @@ func Paging(w http.ResponseWriter, list interface{}, page, perPage int, cnt int6
 		Success: true,
 		Paging:  paging,
 		Data:    list,
-		Errors:  nil,
+		Error:   nil,
 	})
 }
 
@@ -87,30 +89,30 @@ func Error(w http.ResponseWriter, err error) {
 		w.Header().Set(CONTENT_TYPE_HEADER, CONTENT_TYPE_JSON)
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(JsonResponse{
-			Errors: &ErrorResponse{
+			Error: &ErrorResponse{
 				Code:    v.Code,
 				Status:  v.Status,
 				Message: v.Message,
+				Details: v.Details,
 			},
 		})
 
 		return
 	}
 
-	e, isCustomErr := err.(*custom_error.CustomErrors)
+	e, isCustomErr := err.(*custom_error.CustomError)
 	if !isCustomErr {
 		if err != nil && !errors.Is(err, context.Canceled) {
-			// bugsnag.Notify(err)
 			fmt.Println(err.Error(), "[unhandled-error]")
 		}
 
 		w.Header().Set(CONTENT_TYPE_HEADER, CONTENT_TYPE_JSON)
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(JsonResponse{
-			Errors: &ErrorResponse{
+			Error: &ErrorResponse{
 				Code:    constant.DefaultUnhandledError,
 				Status:  http.StatusInternalServerError,
-				Message: constant.ErrorMessageMap[constant.DefaultUnhandledError],
+				Message: constant.HTTPStatusText(http.StatusInternalServerError),
 			},
 		})
 
@@ -119,12 +121,12 @@ func Error(w http.ResponseWriter, err error) {
 
 	httpCode := http.StatusInternalServerError
 	internalCode := constant.DefaultUnhandledError
-	msg := constant.ErrorMessageMap[constant.DefaultUnhandledError]
+	msg := constant.HTTPStatusText(http.StatusInternalServerError)
 
 	if e.ErrorContext != nil && e.ErrorContext.HTTPCode > 0 {
 		httpCode = e.ErrorContext.HTTPCode
 		internalCode = constant.InteralResponseCodeMap[httpCode]
-		msg = constant.ErrorMessageMap[internalCode]
+		msg = constant.HTTPStatusText(httpCode)
 
 		if e.ErrorContext.Message != "" {
 			msg = e.ErrorContext.Message
@@ -134,7 +136,7 @@ func Error(w http.ResponseWriter, err error) {
 	w.Header().Set(CONTENT_TYPE_HEADER, CONTENT_TYPE_JSON)
 	w.WriteHeader(httpCode)
 	json.NewEncoder(w).Encode(JsonResponse{
-		Errors: &ErrorResponse{
+		Error: &ErrorResponse{
 			Code:    internalCode,
 			Status:  httpCode,
 			Message: msg,
@@ -148,10 +150,10 @@ func UnauthorizedError(w http.ResponseWriter) {
 	json.NewEncoder(w).Encode(JsonResponse{
 		Data:    nil,
 		Success: false,
-		Errors: &ErrorResponse{
+		Error: &ErrorResponse{
 			Code:    constant.DefaultUnauthorizedError,
 			Status:  http.StatusUnauthorized,
-			Message: constant.ErrorMessageMap[constant.DefaultUnauthorizedError],
+			Message: constant.HTTPStatusText(http.StatusUnauthorized),
 		},
 	})
 }

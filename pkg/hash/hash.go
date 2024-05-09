@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/ffajarpratama/pos-wash-api/pkg/constant"
-	custom_error "github.com/ffajarpratama/pos-wash-api/pkg/error"
+	"github.com/ffajarpratama/pos-wash-api/pkg/custom_error"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -12,9 +12,8 @@ const (
 	BCRYPT_COST = 11
 )
 
-func Compare(hashedPwd string, plainPwd []byte) (err error) {
-	byteHash := []byte(hashedPwd)
-	err = bcrypt.CompareHashAndPassword(byteHash, plainPwd)
+func Compare(pwd []byte, str []byte) error {
+	err := bcrypt.CompareHashAndPassword(pwd, str)
 	if err != nil {
 		err = custom_error.SetCustomError(&custom_error.ErrorContext{
 			Code:     constant.DefaultBadRequestError,
@@ -22,10 +21,10 @@ func Compare(hashedPwd string, plainPwd []byte) (err error) {
 			Message:  "password salah",
 		})
 
-		return
+		return err
 	}
 
-	return
+	return nil
 }
 
 func HashAndSalt(pwd []byte) (hashPwd string, err error) {

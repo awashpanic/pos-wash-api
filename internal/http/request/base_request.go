@@ -7,7 +7,7 @@ import (
 
 type BaseQuery struct {
 	Page    int    `query:"page"`
-	Limit   int    `query:"limit"`
+	PerPage int    `query:"per_page"`
 	Keyword string `query:"keyword"`
 	Sort    string `query:"sort"`
 }
@@ -17,7 +17,7 @@ const (
 	DEFAULT_PER_PAGE = 20
 )
 
-func NewBaseQuery(r *http.Request) BaseQuery {
+func NewBaseQuery(r *http.Request) *BaseQuery {
 	page := DEFAULT_PAGE
 	limit := DEFAULT_PER_PAGE
 
@@ -25,13 +25,13 @@ func NewBaseQuery(r *http.Request) BaseQuery {
 		page, _ = strconv.Atoi(r.URL.Query().Get("page"))
 	}
 
-	if r.URL.Query().Get("limit") != "" {
-		limit, _ = strconv.Atoi(r.URL.Query().Get("limit"))
+	if r.URL.Query().Get("per_page") != "" {
+		limit, _ = strconv.Atoi(r.URL.Query().Get("per_page"))
 	}
 
-	return BaseQuery{
+	return &BaseQuery{
 		Page:    page,
-		Limit:   limit,
+		PerPage: limit,
 		Keyword: r.URL.Query().Get("keyword"),
 		Sort:    r.URL.Query().Get("sort"),
 	}

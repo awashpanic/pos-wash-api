@@ -3,9 +3,10 @@ package handler
 import (
 	"net/http"
 
+	"github.com/ffajarpratama/pos-wash-api/config"
 	"github.com/ffajarpratama/pos-wash-api/internal/middleware"
 	"github.com/ffajarpratama/pos-wash-api/internal/usecase"
-	custom_validator "github.com/ffajarpratama/pos-wash-api/pkg/validator"
+	"github.com/ffajarpratama/pos-wash-api/pkg/custom_validator"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -14,7 +15,7 @@ type handler struct {
 	v  custom_validator.Validator
 }
 
-func NewRouter(uc usecase.IFaceUsecase, v custom_validator.Validator, mw middleware.Middleware) http.Handler {
+func NewV1Handler(cnf *config.Config, uc usecase.IFaceUsecase, v custom_validator.Validator) http.Handler {
 	r := chi.NewRouter()
 	h := handler{
 		uc: uc,
@@ -25,22 +26,29 @@ func NewRouter(uc usecase.IFaceUsecase, v custom_validator.Validator, mw middlew
 		auth.Post("/register", h.Register)
 		auth.Post("/login", h.Login)
 		auth.Route("/profile", func(profile chi.Router) {
-			profile.Use(mw.AuthenticateUser())
+			profile.Use(middleware.AuthenticateUser(cnf.JWTConfig.Secret))
 			profile.Get("/", h.GetProfile)
 		})
 	})
 
-	r.Group(func(pvt chi.Router) {
-		pvt.Use(mw.AuthenticateUser())
+	r.Group(func(private chi.Router) {
+		private.Use(middleware.AuthenticateUser(cnf.JWTConfig.Secret))
 
-		pvt.Route("/outlet", func(outlet chi.Router) {
+		private.Route("/outlet", func(outlet chi.Router) {
 			outlet.Post("/", h.CreateOutlet)
 			outlet.Get("/{outletID}", h.FindOneOutlet)
 		})
 
-		pvt.Route("/customer", func(customer chi.Router) {
-			customer.Post("/", h.CreateCustomer)
-			customer.Get("/", h.FindAndCounCustomer)
+		private.Route("/service-category", func(category chi.Router) {
+			category.Get("/", h.FindAndCountServiceCategory)
+		})
+
+		private.Route("/service", func(service chi.Router) {
+			service.Post("/", h.CreateService)
+			service.Get("/", h.FindAndCountService)
+			service.Get("/{serviceID}", h.FindOneService)
+			service.Put("/{serviceID}", h.UpdateService)
+			service.Delete("/{serviceID}", h.DeleteService)
 		})
 	})
 
