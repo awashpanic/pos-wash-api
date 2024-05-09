@@ -10,17 +10,21 @@ import (
 
 type IFaceUsecase interface {
 	// auth
-	Register(ctx context.Context, req *request.ReqRegister) (*model.User, error)
-	Login(ctx context.Context, req *request.ReqLogin) (*model.User, error)
-
-	// user
-	CreateUser(ctx context.Context, req *request.ReqInsertUser) error
+	Register(ctx context.Context, req *request.Register) (*model.User, error)
+	Login(ctx context.Context, req *request.Login) (*model.User, error)
 	FindOneUser(ctx context.Context, userID uuid.UUID) (*model.User, error)
 
 	// outlet
-	CreateOutlet(ctx context.Context, req *request.ReqInsertOutlet) error
+	CreateOutlet(ctx context.Context, req *request.CreateOutlet) error
 	FindOneOutlet(ctx context.Context, outletID uuid.UUID) (*model.Outlet, error)
 
-	// user outlet
-	FindAndCountUserOutlet(ctx context.Context, params *request.ListUserOutletQuery) ([]*model.UserOutlet, int64, error)
+	// service category
+	FindAndCountServiceCategory(ctx context.Context, params *request.BaseQuery) ([]*model.ServiceCategory, int64, error)
+
+	// service
+	CreateService(ctx context.Context, req *request.CreateService) error
+	FindAndCountService(ctx context.Context, params *request.ListServiceQuery) ([]*model.Service, int64, error)
+	FindOneService(ctx context.Context, serviceID uuid.UUID) (*model.Service, error)
+	UpdateService(ctx context.Context, req *request.UpdateService) error
+	DeleteService(ctx context.Context, serviceID uuid.UUID) error
 }

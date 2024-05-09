@@ -9,7 +9,6 @@ import (
 	"gorm.io/gorm"
 )
 
-//go:generate mockgen -destination=../mock/mock_repo.go -package=mock_repo -source=repo_interface.go
 type IFaceRepository interface {
 	// user
 	CreateUser(ctx context.Context, data *model.User, db *gorm.DB) error
@@ -22,11 +21,13 @@ type IFaceRepository interface {
 	UpdateOutlet(ctx context.Context, outletID uuid.UUID, data map[string]interface{}, db *gorm.DB) error
 	DeleteOutlet(ctx context.Context, outletID uuid.UUID, db *gorm.DB) error
 
-	// [!temp] outlet-owner
-	CreateOutletOwner(ctx context.Context, data *model.OutletOwner, db *gorm.DB) error
-	FindOneOutletOwner(ctx context.Context, query ...interface{}) (*model.OutletOwner, error)
+	// service category
+	FindAndCountServiceCategory(ctx context.Context, params *request.BaseQuery) ([]*model.ServiceCategory, int64, error)
 
-	// user outlet
-	CreateUserOutlet(ctx context.Context, data *model.UserOutlet, db *gorm.DB) error
-	FindAndCountUserOutlet(ctx context.Context, params *request.ListUserOutletQuery) ([]*model.UserOutlet, int64, error)
+	// service
+	CreateService(ctx context.Context, data *model.Service, db *gorm.DB) error
+	FindAndCountService(ctx context.Context, params *request.ListServiceQuery) ([]*model.Service, int64, error)
+	FindOneService(ctx context.Context, query ...interface{}) (*model.Service, error)
+	UpdateService(ctx context.Context, db *gorm.DB, data map[string]interface{}, query ...interface{}) error
+	DeleteService(ctx context.Context, db *gorm.DB, query ...interface{}) error
 }
