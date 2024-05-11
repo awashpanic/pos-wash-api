@@ -10,6 +10,7 @@ import (
 type Outlet struct {
 	OutletID  uuid.UUID      `json:"outlet_id" gorm:"primaryKey; default:gen_random_uuid()"`
 	UserID    uuid.UUID      `json:"user_id"`
+	Code      string         `json:"code"`
 	Name      string         `json:"name"`
 	Address   string         `json:"address"`
 	LogoID    *uuid.UUID     `json:"logo_id"`
