@@ -3,11 +3,13 @@ package usecase
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/ffajarpratama/pos-wash-api/internal/http/request"
 	"github.com/ffajarpratama/pos-wash-api/internal/model"
 	"github.com/ffajarpratama/pos-wash-api/pkg/constant"
+	"github.com/ffajarpratama/pos-wash-api/pkg/custom_error"
 	"github.com/ffajarpratama/pos-wash-api/pkg/util"
 	"github.com/google/uuid"
 )
@@ -15,11 +17,6 @@ import (
 // CreateOrder implements IFaceUsecase.
 func (u *Usecase) CreateOrder(ctx context.Context, req *request.CreateOrder) (*model.Order, error) {
 	outlet, err := u.Repo.FindOneOutlet(ctx, "outlet_id = ?", req.OutletID)
-	if err != nil {
-		return nil, err
-	}
-
-	pm, err := u.Repo.FindOnePaymentMethod(ctx, "payment_method_id = ?", req.PaymentMethodID)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +39,6 @@ func (u *Usecase) CreateOrder(ctx context.Context, req *request.CreateOrder) (*m
 	}
 
 	var subtotal float64
-	var total float64
 	var fee float64
 	var discount float64
 	var est time.Duration
@@ -90,21 +86,12 @@ func (u *Usecase) CreateOrder(ctx context.Context, req *request.CreateOrder) (*m
 		subtotal += v.Price * float64(tmp.Quantity)
 	}
 
-	total += subtotal
-
-	if pm.FeePercentage > 0 {
-		fee = total * (pm.FeePercentage / 100)
-	} else if pm.Fee > 0 {
-		fee = pm.Fee
-	}
-
 	tx := u.DB.Begin()
 	defer tx.Rollback()
 
 	order := &model.Order{
 		OrderID:          orderID,
 		OutletID:         req.OutletID,
-		PaymentMethodID:  req.PaymentMethodID,
 		PerfumeID:        req.PerfumeID,
 		CustomerID:       req.CustomerID,
 		UserID:           req.UserID,

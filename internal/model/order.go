@@ -11,7 +11,7 @@ import (
 type Order struct {
 	OrderID          uuid.UUID            `json:"order_id" gorm:"primaryKey; default:gen_random_uuid()"`
 	OutletID         uuid.UUID            `json:"outlet_id"`
-	PaymentMethodID  uuid.UUID            `json:"payment_method_id"`
+	PaymentMethodID  *uuid.UUID           `json:"payment_method_id"`
 	PerfumeID        uuid.UUID            `json:"perfume_id"`
 	CustomerID       uuid.UUID            `json:"customer_id"`
 	UserID           uuid.UUID            `json:"user_id"`
