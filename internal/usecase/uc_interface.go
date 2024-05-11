@@ -40,4 +40,9 @@ type IFaceUsecase interface {
 
 	// payment method
 	FindAndCountPaymentMethod(ctx context.Context, params *request.ListPaymentMethodQuery) ([]*model.PaymentMethod, int64, error)
+
+	// order
+	CreateOrder(ctx context.Context, req *request.CreateOrder) (*model.Order, error)
+	FindAndCountOrder(ctx context.Context, params *request.ListOrderQuery) ([]*model.Order, int64, error)
+	FindOneOrder(ctx context.Context, orderID uuid.UUID) (*model.Order, error)
 }
