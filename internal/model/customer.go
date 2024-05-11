@@ -19,7 +19,7 @@ type Customer struct {
 	Address     string              `json:"address"`
 	CreatedAt   time.Time           `json:"created_at"`
 	UpdatedAt   time.Time           `json:"updated_at"`
-	DeletedAt   gorm.DeletedAt      `json:"deleted_at"`
+	DeletedAt   gorm.DeletedAt      `json:"-" gorm:"column:deleted_at"`
 
 	Outlet *Outlet `json:"outlet" gorm:"foreignKey:OutletID; references:OutletID"`
 	Avatar *Media  `json:"avatar" gorm:"foreignKey:AvatarID; references:MediaID"`

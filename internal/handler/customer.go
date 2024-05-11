@@ -34,7 +34,7 @@ func (h *handler) CreateCustomer(w http.ResponseWriter, r *http.Request) {
 func (h *handler) FindAndCountCustomer(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var params request.ListCustomerQuery
-	params.BaseQuery = *request.NewBaseQuery(r)
+	params.BaseQuery = request.NewBaseQuery(r)
 	params.OutletID, _ = uuid.Parse(util.GetOutletIDFromCtx(ctx))
 
 	res, cnt, err := h.uc.FindAndCountCustomer(ctx, &params)
