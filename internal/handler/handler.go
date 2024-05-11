@@ -66,6 +66,12 @@ func NewV1Handler(cnf *config.Config, uc usecase.IFaceUsecase, v custom_validato
 		private.Route("/payment-method", func(payment_method chi.Router) {
 			payment_method.Get("/", h.FindAndCountPaymentMethod)
 		})
+
+		private.Route("/order", func(order chi.Router) {
+			order.Post("/", h.CreateOrder)
+			order.Get("/", h.FindAndCountOrder)
+			order.Get("/{orderID}", h.FindOneOrder)
+		})
 	})
 
 	return r

@@ -44,4 +44,16 @@ type IFaceRepository interface {
 	// payment method
 	FindAndCountPaymentMethod(ctx context.Context, params *request.ListPaymentMethodQuery) ([]*model.PaymentMethod, int64, error)
 	FindOnePaymentMethod(ctx context.Context, query ...interface{}) (*model.PaymentMethod, error)
+
+	// order
+	CreateOrder(ctx context.Context, data *model.Order, db *gorm.DB) error
+	FindAndCountOrder(ctx context.Context, params *request.ListOrderQuery) ([]*model.Order, int64, error)
+	FindOneOrder(ctx context.Context, query ...interface{}) (*model.Order, error)
+	UpdateOrder(ctx context.Context, db *gorm.DB, data map[string]interface{}, query ...interface{}) error
+
+	// order detail
+	CreateManyOrderDetail(ctx context.Context, data []*model.OrderDetail, db *gorm.DB) error
+
+	// order history status
+	CreateManyOrderHistoryStatus(ctx context.Context, data []*model.OrderHistoryStatus, db *gorm.DB) error
 }
