@@ -19,7 +19,7 @@ type IFaceUsecase interface {
 	FindOneOutlet(ctx context.Context, outletID uuid.UUID) (*model.Outlet, error)
 
 	// service category
-	FindAndCountServiceCategory(ctx context.Context, params *request.BaseQuery) ([]*model.ServiceCategory, int64, error)
+	FindAndCountServiceCategory(ctx context.Context, params *request.ListServiceCategoryQuery) ([]*model.ServiceCategory, int64, error)
 
 	// service
 	CreateService(ctx context.Context, req *request.CreateService) error
@@ -34,4 +34,7 @@ type IFaceUsecase interface {
 	FindOneCustomer(ctx context.Context, customerID uuid.UUID) (*model.Customer, error)
 	UpdateCustomer(ctx context.Context, req *request.UpdateCustomer) error
 	DeleteCustomer(ctx context.Context, customerID uuid.UUID) error
+
+	// perfume
+	FindAndCountPerfume(ctx context.Context, params *request.ListPerfumeQuery) ([]*model.Perfume, int64, error)
 }

@@ -22,7 +22,7 @@ type IFaceRepository interface {
 	DeleteOutlet(ctx context.Context, outletID uuid.UUID, db *gorm.DB) error
 
 	// service category
-	FindAndCountServiceCategory(ctx context.Context, params *request.BaseQuery) ([]*model.ServiceCategory, int64, error)
+	FindAndCountServiceCategory(ctx context.Context, params *request.ListServiceCategoryQuery) ([]*model.ServiceCategory, int64, error)
 
 	// service
 	CreateService(ctx context.Context, data *model.Service, db *gorm.DB) error
@@ -37,4 +37,7 @@ type IFaceRepository interface {
 	FindOneCustomer(ctx context.Context, query ...interface{}) (*model.Customer, error)
 	UpdateCustomer(ctx context.Context, db *gorm.DB, data map[string]interface{}, query ...interface{}) error
 	DeleteCustomer(ctx context.Context, db *gorm.DB, query ...interface{}) error
+
+	// perfume
+	FindAndCountPerfume(ctx context.Context, params *request.ListPerfumeQuery) ([]*model.Perfume, int64, error)
 }
