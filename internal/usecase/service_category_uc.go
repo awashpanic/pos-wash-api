@@ -8,6 +8,6 @@ import (
 )
 
 // FindAndCountServiceCategory implements IFaceUsecase.
-func (u *Usecase) FindAndCountServiceCategory(ctx context.Context, params *request.BaseQuery) ([]*model.ServiceCategory, int64, error) {
+func (u *Usecase) FindAndCountServiceCategory(ctx context.Context, params *request.ListServiceCategoryQuery) ([]*model.ServiceCategory, int64, error) {
 	return u.Repo.FindAndCountServiceCategory(ctx, params)
 }

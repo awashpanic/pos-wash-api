@@ -8,8 +8,10 @@ import (
 )
 
 func (h *handler) FindAndCountServiceCategory(w http.ResponseWriter, r *http.Request) {
-	params := request.NewBaseQuery(r)
-	res, cnt, err := h.uc.FindAndCountServiceCategory(r.Context(), params)
+	var params request.ListServiceCategoryQuery
+	params.BaseQuery = request.NewBaseQuery(r)
+
+	res, cnt, err := h.uc.FindAndCountServiceCategory(r.Context(), &params)
 	if err != nil {
 		response.Error(w, err)
 		return

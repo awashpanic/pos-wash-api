@@ -9,7 +9,7 @@ import (
 )
 
 // FindAndCountServiceCategory implements IFaceRepository.
-func (r *Repository) FindAndCountServiceCategory(ctx context.Context, params *request.BaseQuery) ([]*model.ServiceCategory, int64, error) {
+func (r *Repository) FindAndCountServiceCategory(ctx context.Context, params *request.ListServiceCategoryQuery) ([]*model.ServiceCategory, int64, error) {
 	var res = make([]*model.ServiceCategory, 0)
 	var cnt int64
 
