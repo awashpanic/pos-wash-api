@@ -8,6 +8,7 @@ const (
 	DefaultBadRequestError
 	DefaultUnauthorizedError
 	DefaultDuplicateDataError
+	DefaultMethodNotAllowed
 )
 
 var InteralResponseCodeMap = map[int]int{
