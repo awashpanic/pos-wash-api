@@ -62,6 +62,10 @@ func NewV1Handler(cnf *config.Config, uc usecase.IFaceUsecase, v custom_validato
 		private.Route("/perfume", func(perfume chi.Router) {
 			perfume.Get("/", h.FindAndCountPerfume)
 		})
+
+		private.Route("/payment-method", func(payment_method chi.Router) {
+			payment_method.Get("/", h.FindAndCountPaymentMethod)
+		})
 	})
 
 	return r
