@@ -27,6 +27,7 @@ type IFaceRepository interface {
 	// service
 	CreateService(ctx context.Context, data *model.Service, db *gorm.DB) error
 	FindAndCountService(ctx context.Context, params *request.ListServiceQuery) ([]*model.Service, int64, error)
+	FindService(ctx context.Context, query ...interface{}) ([]*model.Service, error)
 	FindOneService(ctx context.Context, query ...interface{}) (*model.Service, error)
 	UpdateService(ctx context.Context, db *gorm.DB, data map[string]interface{}, query ...interface{}) error
 	DeleteService(ctx context.Context, db *gorm.DB, query ...interface{}) error

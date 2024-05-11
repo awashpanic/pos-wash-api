@@ -56,6 +56,22 @@ func (r *Repository) FindAndCountService(ctx context.Context, params *request.Li
 	return res, cnt, nil
 }
 
+// FindService implements IFaceRepository.
+func (r *Repository) FindService(ctx context.Context, query ...interface{}) ([]*model.Service, error) {
+	var res = make([]*model.Service, 0)
+
+	if err := r.db.
+		WithContext(ctx).
+		Model(&model.Service{}).
+		Where(query[0], query[1:]...).
+		Find(&res).
+		Error; err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+
 // FindOneService implements IFaceRepository.
 func (r *Repository) FindOneService(ctx context.Context, query ...interface{}) (*model.Service, error) {
 	var res *model.Service
