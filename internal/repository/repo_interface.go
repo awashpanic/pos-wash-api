@@ -40,6 +40,7 @@ type IFaceRepository interface {
 
 	// perfume
 	FindAndCountPerfume(ctx context.Context, params *request.ListPerfumeQuery) ([]*model.Perfume, int64, error)
+	FindOnePerfume(ctx context.Context, query ...interface{}) (*model.Perfume, error)
 
 	// payment method
 	FindAndCountPaymentMethod(ctx context.Context, params *request.ListPaymentMethodQuery) ([]*model.PaymentMethod, int64, error)

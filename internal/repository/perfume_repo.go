@@ -38,3 +38,14 @@ func (r *Repository) FindAndCountPerfume(ctx context.Context, params *request.Li
 
 	return res, cnt, nil
 }
+
+// FindOnePerfume implements IFaceRepository.
+func (r *Repository) FindOnePerfume(ctx context.Context, query ...interface{}) (*model.Perfume, error) {
+	var res *model.Perfume
+
+	if err := r.BaseRepository.FindOne(r.db.WithContext(ctx).Where(query[0], query[1:]...), &res); err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
