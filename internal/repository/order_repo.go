@@ -103,3 +103,37 @@ func (r *Repository) FindOneOrder(ctx context.Context, query ...interface{}) (*m
 func (r *Repository) UpdateOrder(ctx context.Context, db *gorm.DB, data map[string]interface{}, query ...interface{}) error {
 	return db.WithContext(ctx).Model(&model.Order{}).Where(query[0], query[1:]...).Updates(data).Error
 }
+
+// CountOrder implements IFaceRepository.
+func (r *Repository) CountOrder(ctx context.Context, query ...interface{}) (int64, error) {
+	var cnt int64
+
+	if err := r.db.WithContext(ctx).Model(&model.Order{}).Where(query[0], query[1:]...).Count(&cnt).Error; err != nil {
+		return 0, err
+	}
+
+	return cnt, nil
+}
+
+// GetOrderTrend implements IFaceRepository.
+func (r *Repository) GetOrderTrend(ctx context.Context, outletID uuid.UUID) (*model.OrderTrend, error) {
+	var res *model.OrderTrend
+
+	query := `SELECT COUNT(*) FILTER (WHERE status = 'accepted')						AS accepted,
+					 COUNT(*) FILTER (WHERE status IN ('on-process', 'waiting-pickup')) AS on_process,
+					 COUNT(*) FILTER (WHERE status = 'complete')						AS complete,
+
+					 COALESCE(SUM(total_amount) FILTER (WHERE paid_at::date = current_date::date - '1 day'::interval), 0) AS rev_1,
+					 COALESCE(SUM(total_amount) FILTER (WHERE paid_at::date = current_date::date), 0)                     AS rev_2
+			  FROM tr_order
+			  WHERE outlet_id = ?`
+
+	if err := r.db.WithContext(ctx).
+		Raw(query, outletID).
+		Scan(&res).
+		Error; err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}

@@ -42,3 +42,11 @@ type Order struct {
 func (Order) TableName() string {
 	return "tr_order"
 }
+
+type OrderTrend struct {
+	Accepted  int64   `gorm:"column:accepted"`
+	OnProcess int64   `gorm:"column:on_process"`
+	Complete  int64   `gorm:"column:complete"`
+	Rev1      float64 `gorm:"column:rev_1"`
+	Rev2      float64 `gorm:"column:rev_2"`
+}

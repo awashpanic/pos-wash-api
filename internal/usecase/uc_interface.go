@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/ffajarpratama/pos-wash-api/internal/http/request"
+	"github.com/ffajarpratama/pos-wash-api/internal/http/response"
 	"github.com/ffajarpratama/pos-wash-api/internal/model"
 	"github.com/google/uuid"
 )
@@ -47,4 +48,7 @@ type IFaceUsecase interface {
 	FindOneOrder(ctx context.Context, orderID uuid.UUID) (*model.Order, error)
 	UpdateOrderStatus(ctx context.Context, req *request.UpdateOrderStatus) error
 	OrderPayment(ctx context.Context, req *request.OrderPayment) error
+
+	// dashboard
+	GetDashboardSummary(ctx context.Context, outletID uuid.UUID) (*response.DashoardSummary, error)
 }

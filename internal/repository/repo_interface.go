@@ -38,6 +38,7 @@ type IFaceRepository interface {
 	FindOneCustomer(ctx context.Context, query ...interface{}) (*model.Customer, error)
 	UpdateCustomer(ctx context.Context, db *gorm.DB, data map[string]interface{}, query ...interface{}) error
 	DeleteCustomer(ctx context.Context, db *gorm.DB, query ...interface{}) error
+	GetCustomerTrend(ctx context.Context, outletID uuid.UUID) (*model.CustomerTrend, error)
 
 	// perfume
 	FindAndCountPerfume(ctx context.Context, params *request.ListPerfumeQuery) ([]*model.Perfume, int64, error)
@@ -52,6 +53,8 @@ type IFaceRepository interface {
 	FindAndCountOrder(ctx context.Context, params *request.ListOrderQuery) ([]*model.Order, int64, error)
 	FindOneOrder(ctx context.Context, query ...interface{}) (*model.Order, error)
 	UpdateOrder(ctx context.Context, db *gorm.DB, data map[string]interface{}, query ...interface{}) error
+	CountOrder(ctx context.Context, query ...interface{}) (int64, error)
+	GetOrderTrend(ctx context.Context, outletID uuid.UUID) (*model.OrderTrend, error)
 
 	// order detail
 	CreateManyOrderDetail(ctx context.Context, data []*model.OrderDetail, db *gorm.DB) error

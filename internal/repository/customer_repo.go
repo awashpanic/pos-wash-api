@@ -79,3 +79,22 @@ func (r *Repository) UpdateCustomer(ctx context.Context, db *gorm.DB, data map[s
 func (r *Repository) DeleteCustomer(ctx context.Context, db *gorm.DB, query ...interface{}) error {
 	return db.WithContext(ctx).Delete(&model.Customer{}, query...).Error
 }
+
+// GetCustomerTrend implements IFaceRepository.
+func (r *Repository) GetCustomerTrend(ctx context.Context, outletID uuid.UUID) (*model.CustomerTrend, error) {
+	var res *model.CustomerTrend
+
+	query := `SELECT COUNT(*) FILTER (WHERE created_at::date = current_date::date - '1 day'::interval) AS count_1,
+					 COUNT(*) FILTER (WHERE created_at::date = current_date::date)					   AS count_2
+			  FROM tr_customer
+			  WHERE outlet_id = ?`
+
+	if err := r.db.WithContext(ctx).
+		Raw(query, outletID).
+		Scan(&res).
+		Error; err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}

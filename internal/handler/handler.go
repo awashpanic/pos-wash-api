@@ -34,6 +34,10 @@ func NewV1Handler(cnf *config.Config, uc usecase.IFaceUsecase, v custom_validato
 	r.Group(func(private chi.Router) {
 		private.Use(middleware.AuthenticateUser(cnf.JWTConfig.Secret))
 
+		private.Route("/dashboard", func(dashboard chi.Router) {
+			dashboard.Get("/summary", h.GetDashboardSummary)
+		})
+
 		private.Route("/outlet", func(outlet chi.Router) {
 			outlet.Post("/", h.CreateOutlet)
 			outlet.Get("/{outletID}", h.FindOneOutlet)
