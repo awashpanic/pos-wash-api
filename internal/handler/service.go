@@ -35,7 +35,7 @@ func (h *handler) FindAndCountService(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var params request.ListServiceQuery
-	params.BaseQuery = *request.NewBaseQuery(r)
+	params.BaseQuery = request.NewBaseQuery(r)
 	params.OutletID, _ = uuid.Parse(util.GetOutletIDFromCtx(ctx))
 	params.ServiceCategoryID, _ = uuid.Parse(r.URL.Query().Get("service_category_id"))
 
