@@ -31,3 +31,10 @@ type UpdateOrderStatus struct {
 	OrderID uuid.UUID            `json:"-"`
 	UserID  uuid.UUID            `json:"-"`
 }
+
+type OrderPayment struct {
+	PaymentMethodID   uuid.UUID  `json:"payment_method_id" validate:"required"`
+	PaymentAmount     float64    `json:"payment_amount"`
+	PaymentEvidenceID *uuid.UUID `json:"payment_evidence_id"`
+	OrderID           uuid.UUID  `json:"-"`
+}

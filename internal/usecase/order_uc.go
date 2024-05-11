@@ -185,3 +185,64 @@ func (u *Usecase) UpdateOrderStatus(ctx context.Context, req *request.UpdateOrde
 
 	return tx.Commit().Error
 }
+
+// OrderPayment implements IFaceUsecase.
+func (u *Usecase) OrderPayment(ctx context.Context, req *request.OrderPayment) error {
+	order, err := u.Repo.FindOneOrder(ctx, "order_id = ?", req.OrderID)
+	if err != nil {
+		return err
+	}
+
+	if order.PaidAt != nil {
+		err = custom_error.SetCustomError(&custom_error.ErrorContext{
+			HTTPCode: http.StatusBadRequest,
+			Message:  "order has been paid",
+		})
+
+		return err
+	}
+
+	pm, err := u.Repo.FindOnePaymentMethod(ctx, "payment_method_id = ?", req.PaymentMethodID)
+	if err != nil {
+		return err
+	}
+
+	if pm.Channel == constant.CashPaymentChannel {
+		if req.PaymentAmount == 0 {
+			err = custom_error.SetCustomError(&custom_error.ErrorContext{
+				HTTPCode: http.StatusBadRequest,
+				Message:  "`PaymentAmount` cannot be empty on cash payment",
+			})
+
+			return err
+		}
+
+		if req.PaymentAmount < order.TotalAmount {
+			err = custom_error.SetCustomError(&custom_error.ErrorContext{
+				HTTPCode: http.StatusBadRequest,
+				Message:  "`PaymentAmount` cannot be less than order's total amount",
+			})
+
+			return err
+		}
+	}
+
+	// todo:
+	// if pm.Channel != constant.CashPaymentChannel && req.PaymentEvidenceID == nil {
+	// 	err = custom_error.SetCustomError(&custom_error.ErrorContext{
+	// 		HTTPCode: http.StatusBadRequest,
+	// 		Message:  "`PaymentEvidenceID` cannot be empty on non-cash payment",
+	// 	})
+
+	// 	return err
+	// }
+
+	data := map[string]interface{}{
+		"payment_method_id": &req.PaymentMethodID,
+		"paid_at":           time.Now(),
+		"payment_amount":    req.PaymentAmount,
+		"change":            req.PaymentAmount - order.TotalAmount,
+	}
+
+	return u.Repo.UpdateOrder(ctx, u.DB, data, "order_id = ?", req.OrderID)
+}

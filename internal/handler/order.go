@@ -83,3 +83,22 @@ func (h *handler) UpdateOrderStatus(w http.ResponseWriter, r *http.Request) {
 
 	response.OK(w, nil)
 }
+
+func (h *handler) OrderPayment(w http.ResponseWriter, r *http.Request) {
+	var req request.OrderPayment
+	err := h.v.ValidateStruct(r, &req)
+	if err != nil {
+		response.Error(w, err)
+		return
+	}
+
+	req.OrderID, _ = uuid.Parse(chi.URLParam(r, "orderID"))
+
+	err = h.uc.OrderPayment(r.Context(), &req)
+	if err != nil {
+		response.Error(w, err)
+		return
+	}
+
+	response.OK(w, nil)
+}

@@ -89,7 +89,7 @@ func (r *Repository) FindOneOrder(ctx context.Context, query ...interface{}) (*m
 			Preload("OrderDetail.Service").
 			Preload("OrderDetail.Service.Media").
 			Preload("OrderHistoryStatus", func(db *gorm.DB) *gorm.DB {
-				return db.Order("created_at")
+				return db.Order("created_at DESC")
 			}),
 		&res,
 	); err != nil {
