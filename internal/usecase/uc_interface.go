@@ -45,4 +45,5 @@ type IFaceUsecase interface {
 	CreateOrder(ctx context.Context, req *request.CreateOrder) (*model.Order, error)
 	FindAndCountOrder(ctx context.Context, params *request.ListOrderQuery) ([]*model.Order, int64, error)
 	FindOneOrder(ctx context.Context, orderID uuid.UUID) (*model.Order, error)
+	UpdateOrderStatus(ctx context.Context, req *request.UpdateOrderStatus) error
 }

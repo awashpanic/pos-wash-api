@@ -156,3 +156,45 @@ func (u *Usecase) FindAndCountOrder(ctx context.Context, params *request.ListOrd
 func (u *Usecase) FindOneOrder(ctx context.Context, orderID uuid.UUID) (*model.Order, error) {
 	return u.Repo.FindOneOrder(ctx, "order_id = ?", orderID)
 }
+
+// UpdateOrderStatus implements IFaceUsecase.
+func (u *Usecase) UpdateOrderStatus(ctx context.Context, req *request.UpdateOrderStatus) error {
+	order, err := u.Repo.FindOneOrder(ctx, "order_id = ?", req.OrderID)
+	if err != nil {
+		return err
+	}
+
+	if order.Status == constant.OrderComplete {
+		err = custom_error.SetCustomError(&custom_error.ErrorContext{
+			HTTPCode: http.StatusBadRequest,
+			Message:  "order has been completed",
+		})
+
+		return err
+	}
+
+	tx := u.DB.Begin()
+	defer tx.Rollback()
+
+	data := map[string]interface{}{
+		"status": req.Status,
+	}
+
+	err = u.Repo.UpdateOrder(ctx, tx, data, "order_id = ?", req.OrderID)
+	if err != nil {
+		return err
+	}
+
+	history := []*model.OrderHistoryStatus{{
+		OrderID:   req.OrderID,
+		Status:    req.Status,
+		CreatedBy: req.UserID,
+	}}
+
+	err = u.Repo.CreateManyOrderHistoryStatus(ctx, history, tx)
+	if err != nil {
+		return err
+	}
+
+	return tx.Commit().Error
+}

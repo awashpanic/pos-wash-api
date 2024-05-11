@@ -71,6 +71,7 @@ func NewV1Handler(cnf *config.Config, uc usecase.IFaceUsecase, v custom_validato
 			order.Post("/", h.CreateOrder)
 			order.Get("/", h.FindAndCountOrder)
 			order.Get("/{orderID}", h.FindOneOrder)
+			order.Put("/{orderID}/status", h.UpdateOrderStatus)
 		})
 	})
 

@@ -61,3 +61,25 @@ func (h *handler) FindOneOrder(w http.ResponseWriter, r *http.Request) {
 
 	response.OK(w, res)
 }
+
+func (h *handler) UpdateOrderStatus(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var req request.UpdateOrderStatus
+	err := h.v.ValidateStruct(r, &req)
+	if err != nil {
+		response.Error(w, err)
+		return
+	}
+
+	req.OrderID, _ = uuid.Parse(chi.URLParam(r, "orderID"))
+	req.UserID, _ = uuid.Parse(util.GetUserIDFromCtx(ctx))
+
+	err = h.uc.UpdateOrderStatus(ctx, &req)
+	if err != nil {
+		response.Error(w, err)
+		return
+	}
+
+	response.OK(w, nil)
+}
