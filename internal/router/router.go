@@ -12,19 +12,17 @@ import (
 	"github.com/ffajarpratama/pos-wash-api/pkg/constant"
 	"github.com/ffajarpratama/pos-wash-api/pkg/custom_validator"
 	"github.com/go-chi/chi/v5"
+
 	"github.com/go-chi/cors"
 	"github.com/go-chi/render"
-	"github.com/sirupsen/logrus"
 )
 
 func NewHTTPHandler(cnf *config.Config, uc usecase.IFaceUsecase) http.Handler {
 	r := chi.NewRouter()
-
-	logger := logrus.New()
 	v := custom_validator.New()
 
 	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer(logger))
+	r.Use(middleware.Recoverer)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},

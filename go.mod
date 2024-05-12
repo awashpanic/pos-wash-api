@@ -8,6 +8,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.26.6
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.15.15
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.48.1
+	github.com/fatih/color v1.13.0
 	github.com/go-chi/chi/v5 v5.0.11
 	github.com/go-chi/cors v1.2.1
 	github.com/go-chi/render v1.0.3
@@ -74,6 +75,8 @@ require (
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
+	github.com/mattn/go-colorable v0.1.12 // indirect
+	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
 	github.com/pelletier/go-toml/v2 v2.1.0 // indirect
@@ -82,6 +85,7 @@ require (
 	github.com/spf13/cast v1.5.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/stretchr/testify v1.9.0 // indirect
 	github.com/subosito/gotenv v1.4.2 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.2 // indirect
