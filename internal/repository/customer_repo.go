@@ -80,9 +80,9 @@ func (r *Repository) DeleteCustomer(ctx context.Context, db *gorm.DB, query ...i
 	return db.WithContext(ctx).Delete(&model.Customer{}, query...).Error
 }
 
-// GetCustomerTrend implements IFaceRepository.
-func (r *Repository) GetCustomerTrend(ctx context.Context, outletID uuid.UUID) (*model.CustomerTrend, error) {
-	var res *model.CustomerTrend
+// GetCustomerSummary implements IFaceRepository.
+func (r *Repository) GetCustomerSummary(ctx context.Context, outletID uuid.UUID) (*model.CustomerSummary, error) {
+	var res *model.CustomerSummary
 
 	query := `SELECT COUNT(*) FILTER (WHERE created_at::date = current_date::date - '1 day'::interval) AS count_1,
 					 COUNT(*) FILTER (WHERE created_at::date = current_date::date)					   AS count_2

@@ -29,7 +29,7 @@ func (Customer) TableName() string {
 	return "tr_customer"
 }
 
-type CustomerTrend struct {
+type CustomerSummary struct {
 	Count1 float64 `gorm:"column:count_1"`
 	Count2 float64 `gorm:"column:count_2"`
 }

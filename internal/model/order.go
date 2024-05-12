@@ -43,10 +43,16 @@ func (Order) TableName() string {
 	return "tr_order"
 }
 
-type OrderTrend struct {
+type OrderSummary struct {
 	Accepted  int64   `gorm:"column:accepted"`
 	OnProcess int64   `gorm:"column:on_process"`
 	Complete  int64   `gorm:"column:complete"`
 	Rev1      float64 `gorm:"column:rev_1"`
 	Rev2      float64 `gorm:"column:rev_2"`
+}
+
+type OrderTrend struct {
+	Date  time.Time `json:"date"`
+	Label string    `json:"label"`
+	Total float64   `json:"total"`
 }

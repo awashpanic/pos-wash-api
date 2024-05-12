@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 
 	"github.com/ffajarpratama/pos-wash-api/internal/http/request"
@@ -115,9 +116,9 @@ func (r *Repository) CountOrder(ctx context.Context, query ...interface{}) (int6
 	return cnt, nil
 }
 
-// GetOrderTrend implements IFaceRepository.
-func (r *Repository) GetOrderTrend(ctx context.Context, outletID uuid.UUID) (*model.OrderTrend, error) {
-	var res *model.OrderTrend
+// GetOrderSummary implements IFaceRepository.
+func (r *Repository) GetOrderSummary(ctx context.Context, params *request.OrderTrendQuery) (*model.OrderSummary, error) {
+	var res *model.OrderSummary
 
 	query := `SELECT COUNT(*) FILTER (WHERE status = 'accepted')						AS accepted,
 					 COUNT(*) FILTER (WHERE status IN ('on-process', 'waiting-pickup')) AS on_process,
@@ -128,10 +129,59 @@ func (r *Repository) GetOrderTrend(ctx context.Context, outletID uuid.UUID) (*mo
 			  FROM tr_order
 			  WHERE outlet_id = ?`
 
-	if err := r.db.WithContext(ctx).
-		Raw(query, outletID).
-		Scan(&res).
-		Error; err != nil {
+	args := []interface{}{params.OutletID}
+
+	if params.Start != "" {
+		query += ` AND created_at::date >= ?`
+		args = append(args, params.Start)
+	}
+
+	if params.End != "" {
+		query += ` AND created_at::date <= ?`
+		args = append(args, params.End)
+	}
+
+	if err := r.db.WithContext(ctx).Raw(query, args...).Scan(&res).Error; err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+
+// GetOrderTrend implements IFaceRepository.
+func (r *Repository) GetOrderTrend(ctx context.Context, params *request.OrderTrendQuery) ([]*model.OrderTrend, error) {
+	var res = make([]*model.OrderTrend, 0)
+
+	arg1 := "TO_CHAR(paid_at, 'YYYY-MM')"
+	arg2 := "TO_CHAR(range, 'YYYY-MM')"
+	intv := "month"
+
+	if params.Type == "weekly" {
+		arg1 = "paid_at::date"
+		arg2 = "range::date"
+		intv = "day"
+	}
+
+	query := fmt.Sprintf(`
+		WITH order_range AS (
+			SELECT %s AS paid_at, sum(total_amount) AS total
+		 	FROM tr_order
+			WHERE paid_at IS NOT NULL AND paid_at::date BETWEEN ? AND ? AND outlet_id = ?
+		 	GROUP BY %s
+		)
+		SELECT range AS date, COALESCE(odr.total, 0) AS total
+		FROM GENERATE_SERIES(?, ?, '1 %s'::interval) AS range
+		LEFT JOIN order_range odr ON odr.paid_at = %s;`, arg1, arg1, intv, arg2)
+
+	args := []interface{}{
+		params.Start,
+		params.End,
+		params.OutletID,
+		params.Start,
+		params.End,
+	}
+
+	if err := r.db.WithContext(ctx).Raw(query, args...).Find(&res).Error; err != nil {
 		return nil, err
 	}
 

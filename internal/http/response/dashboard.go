@@ -1,5 +1,7 @@
 package response
 
+import "github.com/ffajarpratama/pos-wash-api/internal/model"
+
 type DashoardSummary struct {
 	OrderCount    *OrderCount    `json:"order_count"`
 	RevenueTrend  *RevenueTrend  `json:"revenue_trend"`
@@ -13,13 +15,19 @@ type OrderCount struct {
 }
 
 type RevenueTrend struct {
-	Yesterday float64 `json:"yesterday"`
-	Today     float64 `json:"today"`
-	Delta     float64 `json:"delta"`
+	Initial float64 `json:"initial"`
+	Final   float64 `json:"final"`
+	Delta   float64 `json:"delta"`
 }
 
 type CustomerTrend struct {
-	Yesterday float64 `json:"yesterday"`
-	Today     float64 `json:"today"`
-	Delta     float64 `json:"delta"`
+	Initial float64 `json:"initial"`
+	Final   float64 `json:"final"`
+	Delta   float64 `json:"delta"`
+}
+
+type OrderTrend struct {
+	OrderCount   *OrderCount         `json:"order_count"`
+	RevenueTrend *RevenueTrend       `json:"revenue_trend"`
+	Trend        []*model.OrderTrend `json:"trend"`
 }
