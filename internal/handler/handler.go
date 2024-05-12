@@ -36,6 +36,7 @@ func NewV1Handler(cnf *config.Config, uc usecase.IFaceUsecase, v custom_validato
 
 		private.Route("/dashboard", func(dashboard chi.Router) {
 			dashboard.Get("/summary", h.GetDashboardSummary)
+			dashboard.Get("/order-trend", h.GetOrderTrend)
 		})
 
 		private.Route("/outlet", func(outlet chi.Router) {
