@@ -17,7 +17,7 @@ const (
 	DEFAULT_PER_PAGE = 20
 )
 
-func NewBaseQuery(r *http.Request) *BaseQuery {
+func NewBaseQuery(r *http.Request) BaseQuery {
 	page := DEFAULT_PAGE
 	limit := DEFAULT_PER_PAGE
 
@@ -29,7 +29,7 @@ func NewBaseQuery(r *http.Request) *BaseQuery {
 		limit, _ = strconv.Atoi(r.URL.Query().Get("per_page"))
 	}
 
-	return &BaseQuery{
+	return BaseQuery{
 		Page:    page,
 		PerPage: limit,
 		Keyword: r.URL.Query().Get("keyword"),

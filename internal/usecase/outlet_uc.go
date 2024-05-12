@@ -5,6 +5,7 @@ import (
 
 	"github.com/ffajarpratama/pos-wash-api/internal/http/request"
 	"github.com/ffajarpratama/pos-wash-api/internal/model"
+	"github.com/ffajarpratama/pos-wash-api/pkg/util"
 	"github.com/google/uuid"
 )
 
@@ -15,6 +16,7 @@ func (u *Usecase) CreateOutlet(ctx context.Context, req *request.CreateOutlet) e
 
 	outlet := &model.Outlet{
 		Name:    req.Name,
+		Code:    util.GenerateRandomString(5, true),
 		Address: req.Address,
 		LogoID:  req.LogoID,
 	}

@@ -12,6 +12,7 @@ type Service struct {
 	ServiceID         uuid.UUID                         `json:"service_id" gorm:"primaryKey; default:gen_random_uuid()"`
 	OutletID          uuid.UUID                         `json:"outlet_id"`
 	ServiceCategoryID uuid.UUID                         `json:"service_category_id"`
+	MediaID           *uuid.UUID                        `json:"media_id"`
 	Name              string                            `json:"name"`
 	Description       string                            `json:"description"`
 	Price             float64                           `json:"price"`
@@ -23,6 +24,7 @@ type Service struct {
 
 	Outlet          *Outlet          `json:"outlet" gorm:"foreignKey:OutletID; references:OutletID"`
 	ServiceCategory *ServiceCategory `json:"service_category" gorm:"foreignKey:ServiceCategoryID; references:ServiceCategoryID"`
+	Media           *Media           `json:"media" gorm:"foreignKey:Media; references:MediaID"`
 }
 
 func (Service) TableName() string {

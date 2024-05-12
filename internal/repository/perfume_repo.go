@@ -8,14 +8,14 @@ import (
 	"github.com/ffajarpratama/pos-wash-api/pkg/util"
 )
 
-// FindAndCountServiceCategory implements IFaceRepository.
-func (r *Repository) FindAndCountServiceCategory(ctx context.Context, params *request.ListServiceCategoryQuery) ([]*model.ServiceCategory, int64, error) {
-	var res = make([]*model.ServiceCategory, 0)
+// FindAndCountPerfume implements IFaceRepository.
+func (r *Repository) FindAndCountPerfume(ctx context.Context, params *request.ListPerfumeQuery) ([]*model.Perfume, int64, error) {
+	var res = make([]*model.Perfume, 0)
 	var cnt int64
 
 	query := r.db.
 		WithContext(ctx).
-		Model(&model.ServiceCategory{})
+		Model(&model.Perfume{})
 
 	if params.Keyword != "" {
 		query = query.Where("name ILIKE ?", "%"+params.Keyword+"%")
@@ -37,4 +37,15 @@ func (r *Repository) FindAndCountServiceCategory(ctx context.Context, params *re
 	}
 
 	return res, cnt, nil
+}
+
+// FindOnePerfume implements IFaceRepository.
+func (r *Repository) FindOnePerfume(ctx context.Context, query ...interface{}) (*model.Perfume, error) {
+	var res *model.Perfume
+
+	if err := r.BaseRepository.FindOne(r.db.WithContext(ctx).Where(query[0], query[1:]...), &res); err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }

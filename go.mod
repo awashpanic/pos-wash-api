@@ -15,6 +15,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.15.3
 	github.com/golang-jwt/jwt/v5 v5.2.0
+	github.com/goodsign/monday v1.0.2
 	github.com/google/uuid v1.3.0
 	github.com/redis/go-redis/v9 v9.4.0
 	github.com/sirupsen/logrus v1.9.0

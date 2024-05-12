@@ -34,6 +34,11 @@ func NewV1Handler(cnf *config.Config, uc usecase.IFaceUsecase, v custom_validato
 	r.Group(func(private chi.Router) {
 		private.Use(middleware.AuthenticateUser(cnf.JWTConfig.Secret))
 
+		private.Route("/dashboard", func(dashboard chi.Router) {
+			dashboard.Get("/summary", h.GetDashboardSummary)
+			dashboard.Get("/order-trend", h.GetOrderTrend)
+		})
+
 		private.Route("/outlet", func(outlet chi.Router) {
 			outlet.Post("/", h.CreateOutlet)
 			outlet.Get("/{outletID}", h.FindOneOutlet)
@@ -49,6 +54,30 @@ func NewV1Handler(cnf *config.Config, uc usecase.IFaceUsecase, v custom_validato
 			service.Get("/{serviceID}", h.FindOneService)
 			service.Put("/{serviceID}", h.UpdateService)
 			service.Delete("/{serviceID}", h.DeleteService)
+		})
+
+		private.Route("/customer", func(customer chi.Router) {
+			customer.Post("/", h.CreateCustomer)
+			customer.Get("/", h.FindAndCountCustomer)
+			customer.Get("/{customerID}", h.FindOneCustomer)
+			customer.Put("/{customerID}", h.UpdateCustomer)
+			customer.Delete("/{customerID}", h.DeleteCustomer)
+		})
+
+		private.Route("/perfume", func(perfume chi.Router) {
+			perfume.Get("/", h.FindAndCountPerfume)
+		})
+
+		private.Route("/payment-method", func(payment_method chi.Router) {
+			payment_method.Get("/", h.FindAndCountPaymentMethod)
+		})
+
+		private.Route("/order", func(order chi.Router) {
+			order.Post("/", h.CreateOrder)
+			order.Get("/", h.FindAndCountOrder)
+			order.Get("/{orderID}", h.FindOneOrder)
+			order.Put("/{orderID}/status", h.UpdateOrderStatus)
+			order.Post("/{orderID}/payment", h.OrderPayment)
 		})
 	})
 

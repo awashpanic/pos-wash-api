@@ -45,6 +45,18 @@ func NewHTTPHandler(cnf *config.Config, uc usecase.IFaceUsecase) http.Handler {
 		})
 	})
 
+	r.MethodNotAllowed(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		json.NewEncoder(w).Encode(response.JsonResponse{
+			Error: &response.ErrorResponse{
+				Code:    constant.DefaultMethodNotAllowed,
+				Status:  http.StatusMethodNotAllowed,
+				Message: "method not allowed",
+			},
+		})
+	})
+
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
