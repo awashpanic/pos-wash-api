@@ -2,7 +2,6 @@ package custom_validator
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 
@@ -52,7 +51,6 @@ func (v *Validator) ValidateStruct(r *http.Request, data interface{}) error {
 	defer r.Body.Close()
 	err = json.Unmarshal(body, data)
 	if err != nil {
-		fmt.Println("err:json.Unmarshal()", err)
 		err = custom_error.SetCustomError(&custom_error.ErrorContext{
 			Code:     constant.DefaultBadRequestError,
 			HTTPCode: http.StatusUnprocessableEntity,

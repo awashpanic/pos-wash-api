@@ -2,14 +2,24 @@ package middleware
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"time"
 
+	"github.com/fatih/color"
 	"github.com/ffajarpratama/pos-wash-api/pkg/util"
+)
+
+// color util
+var (
+	magenta = color.New(color.FgHiMagenta).SprintFunc()
+	cyan    = color.New(color.FgHiCyan).SprintFunc()
+	green   = color.New(color.FgHiGreen).SprintFunc()
+	red     = color.New(color.FgHiRed).SprintFunc()
+	yellow  = color.New(color.FgHiYellow).SprintFunc()
+	blue    = color.New(color.FgHiBlue).SprintFunc()
 )
 
 type customResponseWriter struct {
@@ -23,7 +33,7 @@ func (r *customResponseWriter) WriteHeader(code int) {
 }
 
 func Logger(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	fn := func(w http.ResponseWriter, r *http.Request) {
 		ww := &customResponseWriter{ResponseWriter: w}
 		t1 := time.Now()
 
@@ -33,48 +43,48 @@ func Logger(h http.Handler) http.Handler {
 		}
 
 		defer func() {
-			log.Printf("%s from %s - %d in %s \n", fmt.Sprintf("%s %s %s", r.Method, r.RequestURI, r.Proto), r.RemoteAddr, ww.statusCode, time.Since(t1).Abs().String())
+			method := r.Method
+			scheme := "http"
+			if r.TLS != nil {
+				scheme = "https"
+			}
+
+			addr := fmt.Sprintf("%s://%s%s", scheme, r.Host, r.RequestURI)
+			elapsed := time.Since(t1).Abs().String()
+			status := red(ww.statusCode)
+			switch {
+			case ww.statusCode < 200:
+				status = cyan(ww.statusCode)
+			case ww.statusCode < 300:
+				status = green(ww.statusCode)
+			case ww.statusCode < 400:
+				status = blue(ww.statusCode)
+			case ww.statusCode < 500:
+				status = yellow(ww.statusCode)
+			}
+
+			log.Printf("%s %s - %s in %s", magenta(method), cyan(addr), status, green(elapsed))
 
 			err = r.Body.Close()
 			if err != nil {
 				log.Printf("[error:body.Close()] \n%v\n", err)
 			}
 
-			fields := make(map[string]interface{})
 			token, _ := util.GetTokenFromHeader(r)
 			claims := ParseWithoutVerified(token)
 			if token != "" && claims != nil {
-				fields["@auth"] = map[string]interface{}{
-					"user": map[string]interface{}{
-						"id":        claims.ID,
-						"outlet_id": claims.OutletID,
-						"role":      claims.Role,
-					},
-				}
+				log.Printf(`{"@auth":{"user_id":%s,"outlet_id:%s","role":%s}}`, claims.ID, claims.OutletID, claims.Role)
 			}
 
 			if len(b) > 0 {
-				body := make(map[string]interface{})
-				err = json.Unmarshal(b, &body)
-				if err != nil {
-					log.Printf("[error:json.Unmarshal()] \n%v\n", err)
-				}
-
-				fields["@request"] = body
-			}
-
-			if len(fields) > 0 {
-				logfield, err := json.Marshal(fields)
-				if err != nil {
-					log.Printf("[error:json.Marshal()] \n%v\n", err)
-				}
-
-				log.Println(string(logfield))
+				log.Printf(`{"@request":%s}`, string(b))
 			}
 		}()
 
 		r.Body = io.NopCloser(bytes.NewBuffer(b))
 
 		h.ServeHTTP(ww, r)
-	})
+	}
+
+	return http.HandlerFunc(fn)
 }
